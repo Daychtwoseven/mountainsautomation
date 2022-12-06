@@ -21,7 +21,7 @@ class Selen:
             date_today_in_mst = datetime.now(mst_tz).date().strftime("%m/%d/%Y")
             options = Options()
             options.add_argument("user-data-dir=C:\\Users\\User\\AppData\\Local\\Google\\Chrome\\User Data")
-            website = 'https://aca.plantation.org/CitizenAccess/Cap/GlobalSearchResults.aspx?QueryText=solar'
+            website = 'https://aca-prod.accela.com/PALOALTO/Cap/GlobalSearchResults.aspx?QueryText=solar'
 
             path = "C:/chromedriver.exe"
             service = Service(executable_path=path)
@@ -52,16 +52,13 @@ class Selen:
                 td = row.find_elements(By.TAG_NAME, 'td')
                 date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
                 id = td[1].text
-                status = td[2].text
-                name = td[6].text
-                address_text = td[7].text.split(',')
-
+                status = td[5].text
+                address_text = td[4].text.split(',')
                 if len(address_text) > 1:
                     address = address_text[0]
                     city = address_text[1]
-                    state = 'FL'
-                    zip = address_text[2].split(' ')[1][4]
-
+                    state = 'CA'
+                    zip = address_text[2].split(' ')[2]
 
 
 

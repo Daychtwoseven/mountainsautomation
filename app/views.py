@@ -49,6 +49,8 @@ def index_page(request, action=None):
                 url_req = url_11(request, url)
             elif url.id == 12:
                 url_req = url_12(request, url)
+            elif url.id == 13:
+                url_req = url_13(request, url)
 
             if url_req:
                 return JsonResponse({'statusMsg': 'Success'}, status=200)
@@ -57,7 +59,7 @@ def index_page(request, action=None):
 
         return render(request, 'index.html', context)
     except Exception as e:
-        print(e)
+        return JsonResponse({'statusMsg': str(e)}, status=404)
 
 
 def url_1(request, url):
@@ -525,6 +527,35 @@ def url_12(request, url):
             zip = address_text[2].split(' ')[2]
 
             UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status, address=address,
+                                      city=city,
+                                      state=state, zip=zip)
+
+    return True
+
+
+def url_13(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    date_start = datetime.strptime(
+        datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
+    date_end = datetime.strptime(
+        datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
+    time.sleep(5)
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
+        td = row.find_elements(By.TAG_NAME, 'td')
+        date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
+        id = td[1].text
+        status = td[5].text
+        address_text = td[4].text.split(',')
+        if status != '' and len(address_text) > 1 and date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
+            address = address_text[0]
+            city = address_text[1]
+            state = 'CA'
+            zip = address_text[2].split(' ')[2]
+
+            UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
                                       city=city,
                                       state=state, zip=zip)
 
