@@ -7,7 +7,7 @@ class Urls(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Url: {self.url}'
+        return f'Url: {self.description} | #{self.id}'
 
 
 class UrlResults(models.Model):
@@ -29,6 +29,7 @@ class UrlResults(models.Model):
     existing_solar_system = models.CharField(max_length=255, null=True, blank=True)
     utility_information = models.CharField(max_length=255, null=True, blank=True)
     total_cost = models.CharField(max_length=255, null=True, blank=True)
+
 
 
 
