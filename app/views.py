@@ -51,6 +51,8 @@ def index_page(request, action=None):
                 url_req = url_12(request, url)
             elif url.id == 13:
                 url_req = url_13(request, url)
+            elif url.id == 14:
+                url_req = url_14(request, url)
 
             if url_req:
                 return JsonResponse({'statusMsg': 'Success'}, status=200)
@@ -557,6 +559,67 @@ def url_13(request, url):
 
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
                                       city=city,
+                                      state=state, zip=zip)
+
+    return True
+
+
+def url_14(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    date_start = datetime.strptime(
+        datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
+    date_end = datetime.strptime(
+        datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
+
+    select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
+    select.select_by_value('Building/SolarPV/Residential/NA')
+    time.sleep(5)
+
+    start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
+    driver.execute_script(f"arguments[0].value = '12/01/2022'", start_date)
+
+    end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
+    driver.execute_script(f"arguments[0].value = '12/02/2022'", end_date)
+
+    time.sleep(5)
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+
+    time.sleep(10)
+    records_table = driver.find_element(By.XPATH, '/html/body/form/div[4]/div/div[7]/div[1]/table/tbody/tr/td/div[2]/div[3]/div/div/div[2]/div[2]/div[3]/div[1]/div/table')
+    print(records_table)
+    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
+        td = row.find_elements(By.TAG_NAME, 'td')
+        date = datetime.strptime(td[1].text, '%m/%d/%Y').date()
+        id = td[2].text
+        status = td[7].text
+        description = td[4].text
+        name = td[5].text
+        if status != '' and date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
+            href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
+            req = Request(
+                url=href,
+                headers={'User-Agent': 'Mozilla/5.0'}
+            )
+
+            webpage = urlopen(req).read()
+            soup = BeautifulSoup(webpage, 'lxml')
+            address = soup.find('span', class_='contactinfo_addressline1').text
+            city_text = soup.find_all('span', class_='contactinfo_region')
+            city = city_text[0].text
+            state = city_text[1].text.replace(',', '')
+            zip = city_text[2].text
+
+            firstname = soup.find('span', class_='contactinfo_firstname').text
+            lastname = soup.find('span', class_='contactinfo_lastname').text
+            applicant = f"{firstname} {lastname}"
+
+            job_value_text = soup.find(id='ctl00_PlaceHolderMain_PermitDetailList1_tbADIList')
+            job_value = job_value_text.find('span', class_='ACA_SmLabel ACA_SmLabel_FontSize').text
+
+            UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
+                                      city=city, description=description, name=name, applicant=applicant,
+                                      job_value=job_value,
                                       state=state, zip=zip)
 
     return True
