@@ -668,11 +668,12 @@ def url_15(request, url):
         description = td[6].text
         name = td[7].text
         address_text = td[5].text.split(',')
-        if status != '' and len(address_text) > 1 and date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if status != '' and status != "Pending" and len(address_text) > 1 and date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
             address = address_text[0]
-            city = address_text[-3:]
+            city_text = address_text[-1].split(' ')
+            city = city_text[1]
             state = 'CA'
-            zip = address_text[-1:]
+            zip = city_text[-1:][0]
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
                                       city=city, description=description, name=name,
                                       state=state, zip=zip)
