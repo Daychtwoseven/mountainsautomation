@@ -176,7 +176,6 @@ def url_2(request, url):
             soup = BeautifulSoup(webpage, 'lxml')
             address_text = soup.find('td', class_='NotBreakWord')
             address = address_text.text.split('*')[0]
-            print(address_text)
             city = 'San Diego'
             state = 'CA'
             zip = None
@@ -646,7 +645,6 @@ def url_15(request, url):
 
     date_start = datetime.strptime(date_start_str, '%m/%d/%Y').date()
     date_end = datetime.strptime(date_end_str, '%m/%d/%Y').date()
-
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Solar/NA/NA')
     time.sleep(5)
@@ -659,12 +657,12 @@ def url_15(request, url):
     time.sleep(5)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-    time.sleep(10)
+    time.sleep(20)
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
-        date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
+        date = datetime.strptime(td[2].text, '%m/%d/%Y').date()
         id = td[1].text
         status = td[4].text
         description = td[6].text
@@ -672,11 +670,11 @@ def url_15(request, url):
         address_text = td[5].text.split(',')
         if status != '' and len(address_text) > 1 and date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
             address = address_text[0]
-            city_text = address_text[1].spli(' ')
-            city = city_text[0]
+            print(address_text)
+            city_text = address_text[1].split(' ')
+            city = city_text[1]
             state = 'CA'
-            zip = city_text[2]
-
+            zip = city_text[3]
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
                                       city=city, description=description, name=name,
                                       state=state, zip=zip)
