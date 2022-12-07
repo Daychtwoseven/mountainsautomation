@@ -668,9 +668,8 @@ def url_15(request, url):
         description = td[6].text
         name = td[7].text
         address_text = td[5].text.split(',')
-        if status != '' and len(address_text) > 1 and date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if status != '' and status != 'Pending' and len(address_text) > 1 and date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
             address = address_text[0]
-            print(address_text)
             city_text = address_text[1].split(' ')
             city = city_text[1]
             state = 'CA'
