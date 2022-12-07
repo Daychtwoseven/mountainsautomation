@@ -1,5 +1,7 @@
 # Django
 from urllib.request import Request, urlopen
+
+import bs4
 from bs4 import BeautifulSoup
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -55,6 +57,8 @@ def index_page(request, action=None):
                 url_req = url_14(request, url)
             elif url.id == 15:
                 url_req = url_15(request, url)
+            elif url.id == 16:
+                url_req = url_16(request, url)
 
             if url_req:
                 return JsonResponse({'statusMsg': 'Success'}, status=200)
@@ -640,20 +644,18 @@ def url_15(request, url):
     driver.get(url.url)
     time.sleep(5)
 
-    date_start_str = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end_str = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
-    date_start = datetime.strptime(date_start_str, '%m/%d/%Y').date()
-    date_end = datetime.strptime(date_end_str, '%m/%d/%Y').date()
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Solar/NA/NA')
     time.sleep(5)
 
     start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
-    driver.execute_script(f"arguments[0].value = '{date_start_str}'", start_date)
+    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
 
     end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
-    driver.execute_script(f"arguments[0].value = '{date_end_str}'", end_date)
+    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
     time.sleep(5)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
@@ -662,13 +664,13 @@ def url_15(request, url):
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
-        date = datetime.strptime(td[2].text, '%m/%d/%Y').date()
+        date = td[2].text
         id = td[1].text
         status = td[4].text
         description = td[6].text
         name = td[7].text
         address_text = td[5].text.split(',')
-        if status != '' and status != "Pending" and len(address_text) > 1 and date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if status != '' and status != "Pending" and len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date).first():
             address = address_text[0]
             city_text = address_text[-1].split(' ')
             city = city_text[1]
@@ -677,6 +679,65 @@ def url_15(request, url):
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
                                       city=city, description=description, name=name,
                                       state=state, zip=zip)
+
+    return True
+
+
+def url_16(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    time.sleep(5)
+
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+
+    select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
+    select.select_by_value('Building/Residential/Solar/Permit')
+    time.sleep(5)
+
+    start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
+    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
+
+    end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
+    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
+    time.sleep(5)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(20)
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
+        td = row.find_elements(By.TAG_NAME, 'td')
+        date = td[1].text
+        id = td[2].text
+        status = td[6].text
+        description = td[4].text
+        name = td[5].text
+        if status != '' and status != "Pending" and not UrlResults.objects.filter(record_id=id, date=date).first():
+            href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
+            req = Request(
+                url=href,
+                headers={'User-Agent': 'Mozilla/5.0'}
+            )
+
+            webpage = urlopen(req).read()
+            soup = BeautifulSoup(webpage, 'lxml')
+
+            permit_details_table = soup.find('table', class_='table_parent_detail')
+            permit_details_tr = permit_details_table.find_all('tr', class_='ACA_FLeft')
+            for row in permit_details_tr[1]:
+                if type(row) is bs4.element.Tag:
+                    td = row.table.tr.find_all('td', style="vertical-align:top")
+                    print(td)
+                    address = td[0].text
+                    city_text = td[2].split(' ')
+                    print(f"Address: {address} | City Text: {city_text}")
+            """
+            UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
+                                      city=city, description=description, name=name,
+                                      state=state, zip=zip)
+            """
+
 
     return True
 
