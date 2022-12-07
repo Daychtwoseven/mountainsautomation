@@ -1,3 +1,4 @@
+from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -21,7 +22,7 @@ class Selen:
             date_today_in_mst = datetime.now(mst_tz).date().strftime("%m/%d/%Y")
             options = Options()
             options.add_argument("user-data-dir=C:\\Users\\User\\AppData\\Local\\Google\\Chrome\\User Data")
-            website = 'https://citizenportal.slcgov.com/Citizen/Cap/CapHome.aspx?module=Building&TabName=Building'
+            website = 'https://aca-prod.accela.com/MONTEREY/Cap/CapHome.aspx?module=Building&TabName=Building'
 
             path = "C:/chromedriver.exe"
             service = Service(executable_path=path)
@@ -29,47 +30,31 @@ class Selen:
             driver.get(website)
 
             select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
-            select.select_by_value('Building/SolarPV/Residential/NA')
-            time.sleep(3)
+            select.select_by_value('Building/Solar/PV/.')
+            time.sleep(10)
 
+            """
             start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
             driver.execute_script("arguments[0].value = '12/01/2022'", start_date)
 
             end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
             driver.execute_script("arguments[0].value = '12/02/2022'", end_date)
+            """
+
 
             driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
 
-            time.sleep(5)
-            records_table = driver.find_element(By.XPATH, '/html/body/form/div[4]/div/div[7]/div[1]/table/tbody/tr/td/div[2]/div[3]/div/div/div[2]/div[2]/div[3]/div[1]/div/table/tbody/tr')
+            time.sleep(20)
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            print(len(records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]))
             for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
                 td = row.find_elements(By.TAG_NAME, 'td')
                 date = datetime.strptime(td[1].text, '%m/%d/%Y').date()
+                td[2].find_element(By.TAG_NAME, 'a').send_keys(Keys.CONTROL + 't')
                 id = td[2].text
                 status = td[7].text
                 description = td[4].text
                 name = td[5].text
-                if status != '':
-                    href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
-                    req = Request(
-                        url=href,
-                        headers={'User-Agent': 'Mozilla/5.0'}
-                    )
-
-                    webpage = urlopen(req).read()
-                    soup = BeautifulSoup(webpage, 'lxml')
-                    address = soup.find('span', class_='contactinfo_addressline1').text
-                    city_text = soup.find_all('span', class_='contactinfo_region')
-                    city = city_text[0].text
-                    state = city_text[1].text.replace(',', '')
-                    zip = city_text[2].text
-
-                    firstname = soup.find('span', class_='contactinfo_firstname')
-                    lastname = soup.find('span', class_='contactinfo_lastname')
-
-                    job_value_text = soup.find(id='ctl00_PlaceHolderMain_PermitDetailList1_tbADIList')
-                    job_value = job_value_text.find('span', class_='ACA_SmLabel ACA_SmLabel_FontSize').text
-                    print(job_value)
 
 
 

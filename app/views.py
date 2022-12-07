@@ -59,7 +59,8 @@ def index_page(request, action=None):
                 url_req = url_15(request, url)
             elif url.id == 16:
                 url_req = url_16(request, url)
-
+            elif url.id == 17:
+                url_req = url_17(request, url)
             if url_req:
                 return JsonResponse({'statusMsg': 'Success'}, status=200)
             else:
@@ -703,7 +704,7 @@ def url_16(request, url):
     time.sleep(5)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-    time.sleep(20)
+    time.sleep(10)
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
@@ -725,18 +726,64 @@ def url_16(request, url):
 
             permit_details_table = soup.find('table', class_='table_parent_detail')
             permit_details_tr = permit_details_table.find_all('tr', class_='ACA_FLeft')
+            address = None
+            city = None
+            state = 'NV'
+            zip = None
             for row in permit_details_tr[1]:
                 if type(row) is bs4.element.Tag:
                     td = row.table.tr.find_all('td', style="vertical-align:top")
-                    print(td)
-                    address = td[0].text
-                    city_text = td[2].split(' ')
-                    print(f"Address: {address} | City Text: {city_text}")
-            """
+                    applicant = td[0].text
+                    address = td[1].text
+                    city_text = td[2].text.split(' ')
+                    city = ''.join(city_text[0:-3])
+                    state = 'NV'
+                    zip = city_text[-2]
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
-                                      city=city, description=description, name=name,
+                                      city=city, description=description, name=name, applicant=applicant,
                                       state=state, zip=zip)
-            """
+
+
+    return True
+
+
+def url_17(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    time.sleep(5)
+
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+
+    select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
+    select.select_by_value('Building/Solar/PV/.')
+    time.sleep(10)
+
+    start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
+    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
+
+    end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
+    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
+    time.sleep(5)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(20)
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
+        td = row.find_elements(By.TAG_NAME, 'td')
+        date = td[1].text
+        id = td[2].text
+        status = td[3].text
+        address_text = td[6].text
+        address = address_text.split(',')[0]
+        city_text = address_text.split(',')[1].split(' ')
+        city = ''.join(city_text[0:-2])
+        state = 'CA'
+        zip = city_text[-1]
+        if status != '' and status != "Pending" and not UrlResults.objects.filter(record_id=id, date=date).first():
+            UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address, city=city,
+                                      state=state, zip=zip)
 
 
     return True
