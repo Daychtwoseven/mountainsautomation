@@ -75,8 +75,8 @@
               {% csrf_token %}
               {% urls as urls %}
               <div class="form-group mb-3">
-                <label>Select Url <span class="text-danger">*</span></label>
-                <select class="form-control" id="url" name="url" required>
+                <label>Select Url (<small class="text-danger">Leave blank if wish to run all cities.</small>)</label>
+                <select class="form-control" id="url" name="url">
                   <option></option>
                   {% for url in urls %}
                   <option value="{{ url.id }}">{{ url.description }}</option>
