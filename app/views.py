@@ -84,7 +84,7 @@ def index_page(request, action=None):
                     return JsonResponse({'statusMsg': message}, status=404)
 
             url_func = [url_1, url_2, url_3, url_4, url_5, url_6, url_7, url_8, url_9, url_10, url_11, url_12, url_13,
-                        url_14, url_15, url_16, url_17, url_18, url_19, url_20, url_21]
+                        url_14, url_15, url_16, url_17, url_18, url_19, url_20, url_21, url_22, url_23, url_24, url_25]
 
             counter = 0
             for row in Urls.objects.all():
@@ -1188,7 +1188,6 @@ def url_25(request, url):
     time.sleep(5)
 
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
-    print(records_table)
     if records_table:
         for row in records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
             td = row.find_elements(By.TAG_NAME, 'td')
