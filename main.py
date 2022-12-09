@@ -30,7 +30,7 @@ class Selen:
 
             select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
             select.select_by_value('Permits/Residential/Solar/NA')
-            time.sleep(20)
+            time.sleep(5)
 
             start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
             driver.execute_script(f"arguments[0].value = '12/01/2022'", start_date)
@@ -40,7 +40,7 @@ class Selen:
             time.sleep(5)
 
             driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-            time.sleep(60)
+            time.sleep(5)
 
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
             for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
@@ -49,11 +49,11 @@ class Selen:
                 id = td[2].text
                 name = td[4].text
                 status = td[5].text
-                href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
+                href = td[2].find_elements(By.TAG_NAME, 'a')
+                print(href)
                 if href:
-                    print(href)
                     req = Request(
-                        url=href,
+                        url=href[0].get_attribute('href'),
                         headers={'User-Agent': 'Mozilla/5.0'}
                     )
 
@@ -63,13 +63,13 @@ class Selen:
                     firstname = soup.find('span', class_='contactinfo_firstname').text
                     lastname = soup.find('span', class_='contactinfo_lastname').text
                     applicant = f"{firstname} {lastname}"
-                    address = soup.find('span', class_='contactinfo_addressline1').text
-                    city_text = soup.find('span', class_='contactinfo_region')
-                    city = city_text[0]
+                    address = soup.find('span', class_='contactinfo_addressline1').text if soup.find('span', class_='contactinfo_addressline1') else ''
+                    city_text = soup.find_all('span', class_='contactinfo_region')
+                    city = city_text[0].text.replace(',', '')
                     state = 'CA'
-                    zip = city_text[2].split('-')[0]
+                    zip = city_text[2].text.split('-')[0].replace(',', '')
 
-                    print(f"{address}, {city}, {state}, {zip}")
+                    #print(f"{address}, {city}, {state}, {zip}")
         except Exception as e:
             print(e)
 
