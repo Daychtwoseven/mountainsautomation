@@ -72,6 +72,12 @@ def index_page(request, action=None):
                     url_req = url_21(request, url)
                 elif url.id == 22:
                     url_req = url_22(request, url)
+                elif url.id == 23:
+                    url_req = url_23(request, url)
+                elif url.id == 24:
+                    url_req = url_24(request, url)
+                elif url.id == 25:
+                    url_req = url_25(request, url)
                 if url_req:
                     return JsonResponse({'statusMsg': 'Success'}, status=200)
                 else:
@@ -1081,7 +1087,7 @@ def url_22(request, url):
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
-        date = td[1].text
+        date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
         id = td[2].text
         name = td[5].text
         status = td[7].text
@@ -1092,13 +1098,117 @@ def url_22(request, url):
         city = ' '.join(city_text.split(' ')[0:-2]) if city_text else ''
         state = 'CA'
         zip = city_text.split(' ')[-1][0:5] if city_text else ''
-        if len(address_text) > 1 and status != '' and not UrlResults.objects.filter(record_id=id,
-                                                                                    date=date).first():
+        if len(address_text) > 1 and status != '' and date_start <= date <= date_end and not UrlResults.objects.filter(
+                record_id=id,
+                date=date).first():
             UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status,
                                       address=address, city=city, description=description,
                                       state=state, zip=zip)
 
     return True
+
+
+def url_23(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
+        td = row.find_elements(By.TAG_NAME, 'td')
+        date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
+        id = td[1].text
+        address_text = td[3].text
+        status = td[4].text
+        state = 'CA'
+        address = address_text.split(',')[0] if len(address_text) > 1 else ''
+        city = address_text.split(',')[1] if len(address_text) > 1 else ''
+        zip = address_text.split(',')[-1].split(' ')[-1] if len(address_text) > 1 else ''
+        if len(address_text) > 1 and status != '' and date_start <= date <= date_end and not UrlResults.objects.filter(
+                record_id=id,
+                date=date).first():
+            UrlResults.objects.create(url=url, record_id=id, date=date, status=status,
+                                      address=address, city=city, state=state, zip=zip)
+
+    return True
+
+
+def url_24(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
+        td = row.find_elements(By.TAG_NAME, 'td')
+        date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
+        id = td[1].text
+        address_text = td[6].text
+        status = td[7].text
+        state = 'FL'
+        address = address_text.split(',')[0] if len(address_text) > 1 else ''
+        city = address_text.split(',')[1] if len(address_text) > 1 else ''
+        zip = address_text.split(',')[-1].split(' ')[-1] if len(address_text) > 1 else ''
+        if len(address_text) > 1 and status != '' and date_start <= date <= date_end and not UrlResults.objects.filter(
+                record_id=id,
+                date=date).first():
+            UrlResults.objects.create(url=url, record_id=id, date=date, status=status,
+                                      address=address, city=city, state=state, zip=zip)
+
+    return True
+
+
+def url_25(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+
+    select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
+    select.select_by_value('Building/Residential/Solar/BRSP')
+    time.sleep(5)
+
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+
+
+    date_start_str = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+    date_end_str = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+
+    start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
+    driver.execute_script(f"arguments[0].value = '{date_start_str}'", start_date)
+
+    end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
+    driver.execute_script(f"arguments[0].value = '{date_end_str}'", end_date)
+    time.sleep(5)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(5)
+
+    records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    print(records_table)
+    if records_table:
+        for row in records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(td[1].text, '%m/%d/%Y').date()
+            id = td[2].text
+            name = td[4].text
+            address_text = td[5].text
+            status = td[6].text
+            description = td[7].text
+            state = 'NM'
+            address = address_text.split(',')[0] if len(address_text) > 1 else ''
+            city = ''.join(address_text.split(',')[1].split(' ')[1:-2]) if len(address_text) > 1 else ''
+            zip = address_text.split(',')[1].split(' ')[-1] if len(address_text) > 1 else ''
+            if len(address_text) > 1 and status != '' and date_start <= date <= date_end and not UrlResults.objects.filter(
+                    record_id=id,
+                    date=date).first():
+                UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
+                                          address=address, city=city, state=state, zip=zip, description=description)
+
+        return True
 
 
 def chrome_driver():

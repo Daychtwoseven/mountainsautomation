@@ -22,14 +22,14 @@ class Selen:
             date_today_in_mst = datetime.now(mst_tz).date().strftime("%m/%d/%Y")
             options = Options()
             options.add_argument("user-data-dir=C:\\Users\\User\\AppData\\Local\\Google\\Chrome\\User Data")
-            website = 'https://aca-prod.accela.com/MENIFEE/Cap/CapHome.aspx?module=Permits&TabName=Permits&TabList=Home'
+            website = 'https://aca-prod.accela.com/BERNCO/Cap/CapHome.aspx?module=Building&TabName=Building&TabList=Home'
             path = "C:/chromedriver.exe"
             service = Service(executable_path=path)
             driver = webdriver.Chrome(service=service)
             driver.get(website)
 
             select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
-            select.select_by_value('Permits/Residential/Solar/NA')
+            select.select_by_value('Building/Residential/Solar/BRSP')
             time.sleep(5)
 
             start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
@@ -43,6 +43,7 @@ class Selen:
             time.sleep(5)
 
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            print(records_table)
             for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
                 td = row.find_elements(By.TAG_NAME, 'td')
                 date = td[1].text
@@ -50,7 +51,6 @@ class Selen:
                 name = td[4].text
                 status = td[5].text
                 href = td[2].find_elements(By.TAG_NAME, 'a')
-                print(href)
                 if href:
                     req = Request(
                         url=href[0].get_attribute('href'),
