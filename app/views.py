@@ -892,14 +892,28 @@ def url_19(request, url):
         status = td[5].text
         description = td[4].text
         href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
-        print(href)
-        """
-                if status != '' and status != "Pending" and not UrlResults.objects.filter(record_id=id, date=date).first():
-            UrlResults.objects.create(url=url, record_id=id, description=description, date=date, status=status,
-                                      address=address, city=city,
-                                      state=state, zip=zip)
-        """
+        if href and status != '' and status != "Pending" and not UrlResults.objects.filter(record_id=id,
+                                                                                           date=date).first():
+            req = Request(
+                url=href,
+                headers={'User-Agent': 'Mozilla/5.0'}
+            )
 
+            webpage = urlopen(req).read()
+            soup = BeautifulSoup(webpage, 'lxml')
+
+            firstname = soup.find('span', class_='contactinfo_firstname').text
+            lastname = soup.find('span', class_='contactinfo_lastname').text
+
+            applicant = f"{firstname} {lastname}"
+            address = soup.find('span', class_='contactinfo_addressline1').text
+            city_text = soup.find_all('span', class_='contactinfo_region')
+            city = city_text[0].text
+            state = city_text[1].text
+            zip = city_text[2].text
+            UrlResults.objects.create(url=url, record_id=id, description=description, date=date, status=status,
+                                      address=address, applicant=applicant, city=city,
+                                      state=state, zip=zip)
 
     return True
 
