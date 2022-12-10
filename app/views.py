@@ -4,7 +4,7 @@ from urllib.request import Request, urlopen
 import bs4
 from bs4 import BeautifulSoup
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from selenium.webdriver.support.select import Select
 
 from .models import *
@@ -14,6 +14,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from datetime import datetime
+import threading
 import time
 
 
@@ -23,78 +24,93 @@ def index_page(request, action=None):
         context = {
             'data': UrlResults.objects.all()
         }
-        if request.method == "POST":
-            if request.POST.get('url'):
-                url = Urls.objects.get(id=request.POST.get('url'))
-                url_req = False
-                message = None
-                if url.id == 1:
-                    url_req = url_1(request, url)
-                elif url.id == 2:
-                    url_req = url_2(request, url)
-                elif url.id == 3:
-                    url_req = url_3(request, url)
-                elif url.id == 4:
-                    url_req = url_4(request, url)
-                elif url.id == 5:
-                    url_req = url_5(request, url)
-                elif url.id == 6:
-                    url_req = url_6(request, url)
-                elif url.id == 7:
-                    url_req = url_7(request, url)
-                elif url.id == 8:
-                    url_req = url_8(request, url)
-                elif url.id == 9:
-                    url_req = url_9(request, url)
-                elif url.id == 10:
-                    url_req = url_10(request, url)
-                elif url.id == 11:
-                    url_req = url_11(request, url)
-                elif url.id == 12:
-                    url_req = url_12(request, url)
-                elif url.id == 13:
-                    url_req = url_13(request, url)
-                elif url.id == 14:
-                    url_req = url_14(request, url)
-                elif url.id == 15:
-                    url_req = url_15(request, url)
-                elif url.id == 16:
-                    url_req = url_16(request, url)
-                elif url.id == 17:
-                    url_req = url_17(request, url)
-                elif url.id == 18:
-                    url_req = url_18(request, url)
-                elif url.id == 19:
-                    url_req = url_19(request, url)
-                elif url.id == 20:
-                    url_req = url_20(request, url)
-                elif url.id == 21:
-                    url_req = url_21(request, url)
-                elif url.id == 22:
-                    url_req = url_22(request, url)
-                elif url.id == 23:
-                    url_req = url_23(request, url)
-                elif url.id == 24:
-                    url_req = url_24(request, url)
-                elif url.id == 25:
-                    url_req = url_25(request, url)
-                if url_req:
-                    return JsonResponse({'statusMsg': 'Success'}, status=200)
-                else:
-                    return JsonResponse({'statusMsg': message}, status=404)
+        if action is not None:
+            if action == "reset-database":
+                UrlResults.objects.all().delete()
+                return redirect('app-index-page')
+        else:
+            if request.method == "POST":
+                if request.POST.get('url'):
+                    url = Urls.objects.get(id=request.POST.get('url'))
+                    url_req = False
+                    message = None
+                    if url.id == 1:
+                        url_req = url_1(request, url)
+                    elif url.id == 2:
+                        url_req = url_2(request, url)
+                    elif url.id == 3:
+                        url_req = url_3(request, url)
+                    elif url.id == 4:
+                        url_req = url_4(request, url)
+                    elif url.id == 5:
+                        url_req = url_5(request, url)
+                    elif url.id == 6:
+                        url_req = url_6(request, url)
+                    elif url.id == 7:
+                        url_req = url_7(request, url)
+                    elif url.id == 8:
+                        url_req = url_8(request, url)
+                    elif url.id == 9:
+                        url_req = url_9(request, url)
+                    elif url.id == 10:
+                        url_req = url_10(request, url)
+                    elif url.id == 11:
+                        url_req = url_11(request, url)
+                    elif url.id == 12:
+                        url_req = url_12(request, url)
+                    elif url.id == 13:
+                        url_req = url_13(request, url)
+                    elif url.id == 14:
+                        url_req = url_14(request, url)
+                    elif url.id == 15:
+                        url_req = url_15(request, url)
+                    elif url.id == 16:
+                        url_req = url_16(request, url)
+                    elif url.id == 17:
+                        url_req = url_17(request, url)
+                    elif url.id == 18:
+                        url_req = url_18(request, url)
+                    elif url.id == 19:
+                        url_req = url_19(request, url)
+                    elif url.id == 20:
+                        url_req = url_20(request, url)
+                    elif url.id == 21:
+                        url_req = url_21(request, url)
+                    elif url.id == 22:
+                        url_req = url_22(request, url)
+                    elif url.id == 23:
+                        url_req = url_23(request, url)
+                    elif url.id == 24:
+                        url_req = url_24(request, url)
+                    elif url.id == 25:
+                        url_req = url_25(request, url)
+                    if url_req:
+                        return JsonResponse({'statusMsg': 'Success'}, status=200)
+                    else:
+                        return JsonResponse({'statusMsg': message}, status=404)
 
-            url_func = [url_1, url_2, url_3, url_4, url_5, url_6, url_7, url_8, url_9, url_10, url_11, url_12, url_13,
-                        url_14, url_15, url_16, url_17, url_18, url_19, url_20, url_21, url_22, url_23, url_24, url_25]
+                url_func = [url_1, url_2, url_3, url_4, url_5, url_6, url_7, url_8, url_9, url_10, url_11, url_12,
+                            url_13,
+                            url_14, url_15, url_16, url_17, url_18, url_19, url_20, url_21, url_22, url_23, url_24,
+                            url_25]
 
-            counter = 0
-            for row in Urls.objects.all():
-                if row.is_active:
-                    url_req = url_func[counter](request, row)
-                counter += 1
+                counter = 0
+                threads = []
+                for i in Urls.objects.all():
+                    if i.is_active:
+                        t = threading.Thread(target=url_func[counter], args=(request, i))
+                        t.start()
+                        threads.append(t)
 
-            return JsonResponse({'statusMsg': 'Success'}, status=200)
+                    counter += 1
 
-        return render(request, 'index.html', context)
+                for thread in threads:
+                    thread.join()
+
+
+                return JsonResponse({'statusMsg': 'Success'}, status=200)
+
+            return render(request, 'index.html', context)
     except Exception as e:
         return JsonResponse({'statusMsg': str(e)}, status=404)
 
@@ -484,7 +500,7 @@ def url_9(request, url):
             address = address_text[0]
             city = address_text[1]
             state = 'FL'
-            zip = address_text[2].split(' ')[1]
+            zip = address_text[2].split(',')[-1][0:5]
 
             UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status, address=address,
                                       city=city,
@@ -549,7 +565,7 @@ def url_11(request, url):
             address = address_text[0]
             city = address_text[1]
             state = 'FL'
-            zip = address_text[2].split(' ')[2]
+            zip = address_text[-1].split(' ')[1]
 
             UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status, address=address,
                                       city=city,
@@ -914,65 +930,10 @@ def url_19(request, url):
             webpage = urlopen(req).read()
             soup = BeautifulSoup(webpage, 'lxml')
 
-            firstname = soup.find('span', class_='contactinfo_firstname').text
-            lastname = soup.find('span', class_='contactinfo_lastname').text
-
+            firstname = soup.find('span', class_='contactinfo_firstname').text if soup.find('span', class_='contactinfo_firstname') else ''
+            lastname = soup.find('span', class_='contactinfo_lastname').text if soup.find('span', class_='contactinfo_lastname') else ''
             applicant = f"{firstname} {lastname}"
-            address = soup.find('span', class_='contactinfo_addressline1').text
-            city_text = soup.find_all('span', class_='contactinfo_region')
-            city = city_text[0].text
-            state = city_text[1].text
-            zip = city_text[2].text
-            UrlResults.objects.create(url=url, record_id=id, description=description, date=date, status=status,
-                                      address=address, applicant=applicant, city=city,
-                                      state=state, zip=zip)
-
-    return True
-
-
-def url_19(request, url):
-    driver = chrome_driver()
-    driver.get(url.url)
-    time.sleep(15)
-
-    permit_number = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSPermitNumber')
-    permit_number.send_keys('PLEX')
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-
-    start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
-    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
-
-    end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
-    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
-    time.sleep(15)
-
-    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-    time.sleep(15)
-
-    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
-    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
-        td = row.find_elements(By.TAG_NAME, 'td')
-        date = td[1].text
-        id = td[2].text
-        status = td[5].text
-        description = td[4].text
-        href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
-        if href and status != '' and status != "Pending" and not UrlResults.objects.filter(record_id=id,
-                                                                                           date=date).first():
-            req = Request(
-                url=href,
-                headers={'User-Agent': 'Mozilla/5.0'}
-            )
-
-            webpage = urlopen(req).read()
-            soup = BeautifulSoup(webpage, 'lxml')
-
-            firstname = soup.find('span', class_='contactinfo_firstname').text
-            lastname = soup.find('span', class_='contactinfo_lastname').text
-
-            applicant = f"{firstname} {lastname}"
-            address = soup.find('span', class_='contactinfo_addressline1').text
+            address = soup.find('span', class_='contactinfo_addressline1').text if soup.find('span', class_='contactinfo_addressline1') else ''
             city_text = soup.find_all('span', class_='contactinfo_region')
             city = city_text[0].text
             state = city_text[1].text
@@ -990,7 +951,7 @@ def url_20(request, url):
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Permits/Residential/Solar/NA')
-    time.sleep(5)
+    time.sleep(15)
 
     date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
     date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
@@ -1002,7 +963,7 @@ def url_20(request, url):
     driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-    time.sleep(5)
+    time.sleep(15)
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
@@ -1041,7 +1002,7 @@ def url_20(request, url):
 def url_21(request, url):
     driver = chrome_driver()
     driver.get(url.url)
-
+    time.sleep(15)
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -1070,24 +1031,27 @@ def url_22(request, url):
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Residential/PVR/Photovoltaic Residential')
-    time.sleep(5)
+    time.sleep(15)
 
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+
+    date_start_str = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+    date_end_str = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
-    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
+    driver.execute_script(f"arguments[0].value = '{date_start_str}'", start_date)
 
     end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
-    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
+    driver.execute_script(f"arguments[0].value = '{date_end_str}'", end_date)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-    time.sleep(5)
+    time.sleep(15)
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
-        date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
+        date = datetime.strptime(td[1].text, '%m/%d/%Y').date()
         id = td[2].text
         name = td[5].text
         status = td[7].text
@@ -1111,10 +1075,9 @@ def url_22(request, url):
 def url_23(request, url):
     driver = chrome_driver()
     driver.get(url.url)
-
     date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
     date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
-
+    time.sleep(40)
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -1138,10 +1101,10 @@ def url_23(request, url):
 def url_24(request, url):
     driver = chrome_driver()
     driver.get(url.url)
-
+    time.sleep(15)
     date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
     date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
-
+    time.sleep(15)
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -1168,11 +1131,10 @@ def url_25(request, url):
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Residential/Solar/BRSP')
-    time.sleep(5)
+    time.sleep(15)
 
     date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
     date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
-
 
     date_start_str = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
     date_end_str = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
@@ -1182,10 +1144,10 @@ def url_25(request, url):
 
     end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
     driver.execute_script(f"arguments[0].value = '{date_end_str}'", end_date)
-    time.sleep(5)
+    time.sleep(15)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-    time.sleep(5)
+    time.sleep(15)
 
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:

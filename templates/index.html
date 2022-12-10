@@ -11,7 +11,8 @@
   </head>
   <body>
     <div class="container mt-5">
-      <button class="btn btn-success mb-3 mt-5 " data-bs-toggle="modal" data-bs-target="#runScrapeModal">Run Scrape</button>
+      <button class="btn btn-success mb-3 mt-5" data-bs-toggle="modal" data-bs-target="#runScrapeModal">Run Scrape</button>
+      <a class="btn btn-danger mb-3 mt-5" href="{% url 'app-index-page' action='reset-database' %}">Reset Database</a>
       <div class="table-responsive">
         <table class="table table-bordered" id="urls-table">
         <thead>
