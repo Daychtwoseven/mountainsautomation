@@ -3,4 +3,3 @@ __pycache__
 *.pyc
 venv
 CACHE
-main\settings.py

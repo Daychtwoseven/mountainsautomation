@@ -4,6 +4,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from datetime import datetime
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
@@ -22,54 +24,54 @@ class Selen:
             date_today_in_mst = datetime.now(mst_tz).date().strftime("%m/%d/%Y")
             options = Options()
             options.add_argument("user-data-dir=C:\\Users\\User\\AppData\\Local\\Google\\Chrome\\User Data")
-            website = 'https://aca-prod.accela.com/BERNCO/Cap/CapHome.aspx?module=Building&TabName=Building&TabList=Home'
+            website = 'https://citizenaccess.arapahoegov.com/CitizenAccess/Cap/GlobalSearchResults.aspx?QueryText=solar'
             path = "C:/chromedriver.exe"
             service = Service(executable_path=path)
             driver = webdriver.Chrome(service=service)
             driver.get(website)
-
-            select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
-            select.select_by_value('Building/Residential/Solar/BRSP')
+            select = Select(driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_CapView_ddlModule"]'))
+            select.select_by_value('Contractors')
             time.sleep(5)
+            records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
 
-            start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
-            driver.execute_script(f"arguments[0].value = '12/01/2022'", start_date)
+            if records_table:
+                records_tr = records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
 
-            end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
-            driver.execute_script(f"arguments[0].value = '12/08/2022'", end_date)
-            time.sleep(5)
+                for i in range(0, 9):
+                    records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+                    records_tr = records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                                 3:-2]
+                    td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+                    date = td[0].text
+                    name = td[2].text
+                    status = td[4].text
+                    applicant = None
+                    if td[1].find_elements(By.TAG_NAME, 'a'):
+                        wait = WebDriverWait(driver, 10)
+                        td[1].find_element(By.TAG_NAME, 'a').click()
+                        wait.until(EC.presence_of_element_located((By.XPATH, '//*['
+                                                                             '@id'
+                                                                             '="ctl00_PlaceHolderMain_shPermitDetail_lblSectionTitle"]')))
+                        print(driver.find_element(By.XPATH, '//*['
+                                                            '@id'
+                                                            '="ctl00_PlaceHolderMain_shPermitDetail_lblSectionTitle"]'))
+                        firstname = driver.find_elements(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div['
+                                                                   '1]/div[3]/div[5]/div[2]/div[3]/div[1]/div['
+                                                                   '1]/table/tbody/tr/td['
+                                                                   '1]/div/span/table/tbody/tr/td[2]/div/span[1]')
+                        lastname = driver.find_elements(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div['
+                                                                  '1]/div[3]/div[5]/div[2]/div[3]/div[1]/div['
+                                                                  '1]/table/tbody/tr/td[1]/div/span/table/tbody/tr/td['
+                                                                  '2]/div/span[2]')
+                        print(firstname)
+                        if firstname and lastname:
+                            applicant = f"{firstname[0].text} {lastname[0].text}"
 
-            driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-            time.sleep(5)
+                        print(applicant)
+                        driver.get(website)
+                        wait.until(
+                            EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')))
 
-            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
-            print(records_table)
-            for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
-                td = row.find_elements(By.TAG_NAME, 'td')
-                date = td[1].text
-                id = td[2].text
-                name = td[4].text
-                status = td[5].text
-                href = td[2].find_elements(By.TAG_NAME, 'a')
-                if href:
-                    req = Request(
-                        url=href[0].get_attribute('href'),
-                        headers={'User-Agent': 'Mozilla/5.0'}
-                    )
-
-                    webpage = urlopen(req).read()
-                    soup = BeautifulSoup(webpage, 'lxml')
-
-                    firstname = soup.find('span', class_='contactinfo_firstname').text
-                    lastname = soup.find('span', class_='contactinfo_lastname').text
-                    applicant = f"{firstname} {lastname}"
-                    address = soup.find('span', class_='contactinfo_addressline1').text if soup.find('span', class_='contactinfo_addressline1') else ''
-                    city_text = soup.find_all('span', class_='contactinfo_region')
-                    city = city_text[0].text.replace(',', '')
-                    state = 'CA'
-                    zip = city_text[2].text.split('-')[0].replace(',', '')
-
-                    #print(f"{address}, {city}, {state}, {zip}")
         except Exception as e:
             print(e)
 
