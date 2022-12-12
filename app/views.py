@@ -1310,7 +1310,6 @@ def url_29(request, url):
     time.sleep(30)
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
-        print(len(records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]))
         for row in records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
             td = row.find_elements(By.TAG_NAME, 'td')
             date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
@@ -1343,7 +1342,7 @@ def url_30(request, url):
     if records_table:
         records_tr = records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
 
-        for i in range(0, len(records_tr)-1):
+        for i in range(0, len(records_tr) - 1):
             records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
             records_tr = records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
                          3:-2]
@@ -1366,7 +1365,6 @@ def url_30(request, url):
                                                           '1]/div[3]/div[5]/div[2]/div[3]/div[1]/div['
                                                           '1]/table/tbody/tr/td[1]/div/span/table/tbody/tr/td['
                                                           '2]/div/span[2]')
-
 
                 applicant = None
                 address = None
@@ -1399,7 +1397,79 @@ def url_30(request, url):
                 wait.until(
                     EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')))
 
+        return True
 
+
+def url_30(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+
+    select = Select(driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType"]'))
+    select.select_by_value('PnD/Building/Miscellaneous_1/Electrical')
+    time.sleep(5)
+
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+
+    start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
+    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
+
+    end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
+    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(15)
+
+    records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    if records_table:
+        records_tr = records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            records_tr = records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(td[1].text, '%m/%d/%Y').date()
+            id = td[2].text
+            name = td[5].text
+            status = td[7].text
+            if td[2].find_elements(By.TAG_NAME, 'a'):
+                wait = WebDriverWait(driver, 10)
+                td[2].find_element(By.TAG_NAME, 'a').click()
+                wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
+                firstname = driver.find_elements(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
+                                                           '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr['
+                                                           '1]/td[1]/div/span/table/tbody/tr/td[2]/div/span[1]')
+                lastname = driver.find_elements(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
+                                                          '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr['
+                                                          '1]/td[1]/div/span/table/tbody/tr/td[2]/div/span[2]')
+
+                applicant = None
+                address = None
+                city = None
+                state = None
+                zip = None
+                if firstname and lastname:
+                    applicant = f"{firstname[0].text} {lastname[0].text}"
+                    address = driver.find_element(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
+                                                            '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr/td['
+                                                            '1]/div/span/table/tbody/tr/td[2]/div/span[4]').text
+                    city = driver.find_element(By.XPATH,
+                                               '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr[1]/td[1]/div/span/table/tbody/tr/td[2]/div/span[5]').text
+                    state = driver.find_element(By.XPATH,
+                                                'CA').text
+                    zip = driver.find_element(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
+                                                        '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr[1]/td['
+                                                        '1]/div/span/table/tbody/tr/td[2]/div/span[7]').text
+
+                if date_start <= date <= date_end and not UrlResults.objects.filter(
+                        record_id=id, date=date).first():
+                    UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
+                                              applicant=applicant,
+                                              address=address, city=city, state=state, zip=zip)
+                driver.get(url.url)
+                wait.until(
+                    EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')))
 
         return True
 
