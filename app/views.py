@@ -690,7 +690,6 @@ def url_14(request, url):
 
     records_table = driver.find_element(By.XPATH, '/html/body/form/div[4]/div/div[7]/div[1]/table/tbody/tr/td/div['
                                                   '2]/div[3]/div/div/div[2]/div[2]/div[3]/div[1]/div/table')
-    print(len(records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]))
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
         date = td[1].text
@@ -700,7 +699,6 @@ def url_14(request, url):
         name = td[5].text
         if not UrlResults.objects.filter(record_id=id, date=date).first():
             href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
-            print(td[2])
             if href:
                 req = Request(
                     url=href,
@@ -1547,16 +1545,17 @@ def url_32(request, url):
 
 
 def url_33(request, url):
+    print('here')
     driver = chrome_driver()
     driver.get(url.url)
 
     date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
     date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    time.sleep(15)
+    time.sleep(5)
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Building Department Web Permit/Residential Solar/NA')
-    time.sleep(15)
+    time.sleep(5)
 
     start_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate"]')
     driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
@@ -1564,19 +1563,64 @@ def url_33(request, url):
     end_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate"]')
     driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
 
-    time.sleep(15)
+    time.sleep(5)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-    time.sleep(15)
+    time.sleep(5)
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
-    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
-        td = row.find_elements(By.TAG_NAME, 'td')
-        date = td[1].text
-        id = td[3].text
-        status = td[5].text
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = td[1].text
+            id = td[2].text
+            name = td[5].text
+            status = td[7].text
+            print('here')
+            if td[2].find_elements(By.TAG_NAME, 'a'):
+                wait = WebDriverWait(driver, 10)
+                td[2].find_element(By.TAG_NAME, 'a').click()
+                wait.until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
+                owner_details = driver.find_elements(By.XPATH,
+                                                     '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
+                                                     '5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr['
+                                                     '2]/td/div/span/table/tbody/tr/td[2]/table/tbody/tr')
 
-        UrlResults.objects.create(url=url, record_id=id, date=date, status=status)
+                address = None
+                city = None
+                state = None
+                zip = None
+                if owner_details:
+                    owner = f"{var_checker(owner_details[0])}"
+                    address = var_checker(
+                        driver.find_element(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
+                                                      '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr['
+                                                      '2]/td/div/span/table/tbody/tr/td[2]/table/tbody/tr['
+                                                      '2]/td'))
+
+                    owner_details = driver.find_elements(By.XPATH,
+                                                    '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
+                                                    '5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr['
+                                                    '2]/td/div/span/table/tbody/tr/td[2]/table/tbody/tr')
+                    city_text = var_checker(owner_details[-1])
+                    city = city_text.split(' ')[0]
+
+                    state = city_text.split(' ')[1]
+                    zip = city_text.split(' ')[-1][0:5]
+
+                    if not UrlResults.objects.filter(
+                            record_id=id, date=date).first():
+                        UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
+                                                  owner=owner,
+                                                  address=address, city=city, state=state, zip=zip)
+                driver.get(url.url)
+                wait.until(
+                    EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
 
     return True
 
@@ -1624,6 +1668,17 @@ def var_checker(data):
     if data:
         return data.text
     return ''
+
+
+def beautifulsoup(url):
+    req = Request(
+        url=url,
+        headers={'User-Agent': 'Mozilla/5.0'}
+    )
+
+    webpage = urlopen(req).read()
+    soup = BeautifulSoup(webpage, 'lxml')
+    return soup
 
 # next_page = current data
 # while next_page
