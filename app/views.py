@@ -406,7 +406,7 @@ def url_5(request, url):
             zip = address_text[2].split(' ')[2] if len(address_text) > 1 else ''
 
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address, city=city,
-                                      state=state, zip=zip)
+                                      state=state, zip=zip, name=name)
 
     return True
 
