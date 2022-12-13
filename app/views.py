@@ -115,10 +115,14 @@ def index_page(request, action=None):
                             url_25, url_26, url_27, url_28, url_29, url_30, url_31, url_32, url_33, url_34]
 
                 counter = 0
+                success = 0
                 for i in Urls.objects.all():
                     if i.is_active:
                         print(f"Running City: {i.description}")
-                        url_func[counter](request, i)
+                        url_req = url_func[counter](request, i)
+                        if url_req:
+                            success += 1
+                    counter += 1
                 """
                 threads = []
                 for i in Urls.objects.all():
