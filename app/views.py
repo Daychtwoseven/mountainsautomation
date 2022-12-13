@@ -690,6 +690,7 @@ def url_14(request, url):
 
     records_table = driver.find_element(By.XPATH, '/html/body/form/div[4]/div/div[7]/div[1]/table/tbody/tr/td/div['
                                                   '2]/div[3]/div/div/div[2]/div[2]/div[3]/div[1]/div/table')
+    print(len(records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]))
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
         date = td[1].text
@@ -697,8 +698,9 @@ def url_14(request, url):
         status = td[7].text
         description = td[4].text
         name = td[5].text
-        if status != '' and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if not UrlResults.objects.filter(record_id=id, date=date).first():
             href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
+            print(td[2])
             if href:
                 req = Request(
                     url=href,
