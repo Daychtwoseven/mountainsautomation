@@ -175,12 +175,12 @@ def url_1(request, url):
                                                       '2]/div[2]/div[3]/div[1]/div/table/tbody/tr')
     for row in records_table_tr[2:-1]:
         td = row.find_elements(By.TAG_NAME, 'td')
-        date = td[1].text
-        id = td[2].text
-        status = td[6].text
-        name = td[4].text
-        td_status = td[6].text
-        description = td[9].text
+        date = var_checker(td[1])
+        id = var_checker(td[2])
+        status = var_checker(td[6])
+        name = var_checker(td[4])
+        td_status = var_checker(td[6])
+        description = var_checker(td[9])
         if td_status != "" and not UrlResults.objects.filter(record_id=id, date=date).first():
             href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
             if href:
@@ -350,10 +350,10 @@ def url_4(request, url):
 
     for row in records_table_tr[2:-1]:
         td = row.find_elements(By.TAG_NAME, 'td')
-        date = td[1].text
-        id = td[2].text
-        status = td[5].text
-        address_text = td[4].text
+        date = var_checker(td[1])
+        id = var_checker(td[2])
+        status = var_checker(td[5])
+        address_text = var_checker(td[4])
         if status != "" and len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date).first():
             href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
             if href:
@@ -363,14 +363,14 @@ def url_4(request, url):
                 )
                 webpage = urlopen(req).read()
                 soup = BeautifulSoup(webpage, 'lxml')
-                address = soup.find('span', class_='contactinfo_addressline1').text
+                address = var_checker(soup.find('span', class_='contactinfo_addressline1'))
                 city_text = soup.find_all('span', class_='contactinfo_region')
-                city = city_text[0].text
-                state = city_text[1].text
-                zip = city_text[2].text
+                city = var_checker(city_text[0])
+                state = var_checker(city_text[1])
+                zip = var_checker(city_text[2])
 
-                firstname = soup.find('span', class_='contactinfo_firstname').text
-                lastname = soup.find('span', class_='contactinfo_lastname').text
+                firstname = var_checker(soup.find('span', class_='contactinfo_firstname'))
+                lastname = var_checker(soup.find('span', class_='contactinfo_lastname'))
 
                 applicant = f"{firstname} {lastname}"
 
@@ -393,17 +393,17 @@ def url_5(request, url):
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
         date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
-        id = td[1].text
-        status = td[5].text
-        name = td[3].text
+        id = var_checker(td[1])
+        status = var_checker(td[5])
+        name = var_checker(td[3])
         address_text = td[4].text.split(',')
 
         if status != '' and len(address_text) > 1 and date_start <= date <= date_end and not UrlResults.objects.filter(
                 record_id=id, date=date).first():
-            address = address_text[0]
-            city = address_text[1]
+            address = var_checker(address_text[0])
+            city = var_checker(address_text[1])
             state = 'KY'
-            zip = address_text[2].split(' ')[2]
+            zip = address_text[2].split(' ')[2] if len(address_text) > 1 else ''
 
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address, city=city,
                                       state=state, zip=zip)
@@ -1616,9 +1616,16 @@ def chrome_driver():
     driver = webdriver.Chrome(options=options)
     return driver
 
+
+def var_checker(data):
+    if data:
+        return data.text
+    return ''
+
    # next_page = current data
    # while next_page
         # for i in range(0, 10):
             # if i == 9:
                 # scrape the data
                 #
+
