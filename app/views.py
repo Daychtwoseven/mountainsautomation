@@ -364,9 +364,10 @@ def url_4(request, url):
                 soup = BeautifulSoup(webpage, 'lxml')
                 address = var_checker(soup.find('span', class_='contactinfo_addressline1'))
                 city_text = soup.find_all('span', class_='contactinfo_region')
-                city = var_checker(city_text[0])
-                state = var_checker(city_text[1])
-                zip = var_checker(city_text[2])
+                print(city_text)
+                city = var_checker(city_text[0]) if city_text else ''
+                state = var_checker(city_text[1]) if city_text else ''
+                zip = var_checker(city_text[2]) if city_text else ''
 
                 firstname = var_checker(soup.find('span', class_='contactinfo_firstname'))
                 lastname = var_checker(soup.find('span', class_='contactinfo_lastname'))
