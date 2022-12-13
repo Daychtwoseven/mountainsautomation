@@ -137,7 +137,6 @@ def index_page(request, action=None):
                     thread.join()
                 """
 
-
                 return JsonResponse({'statusMsg': 'Success'}, status=200)
 
             return render(request, 'index.html', context)
@@ -396,15 +395,14 @@ def url_5(request, url):
         id = var_checker(td[1])
         status = var_checker(td[5])
         name = var_checker(td[3])
-        address_text = td[4].text.split(',')
-
+        address_text = td[4].text.split(',') if td[4] else ''
         if status != '' and len(address_text) > 1 and date_start <= date <= date_end and not UrlResults.objects.filter(
                 record_id=id, date=date).first():
-            address = var_checker(address_text[0])
-            city = var_checker(address_text[1])
+            address = address_text[0] if len(address_text) else ''
+            city = address_text[1] if len(address_text) else ''
             state = 'KY'
             zip = address_text[2].split(' ')[2] if len(address_text) > 1 else ''
-
+            print(zip)
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address, city=city,
                                       state=state, zip=zip, name=name)
 
@@ -1474,7 +1472,8 @@ def url_31(request, url):
                     applicant = f"{firstname[0].text} {lastname[0].text}"
                     address = driver.find_element(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
                                                             '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr/td['
-                                                            '1]/div/span/table/tbody/tr/td[2]/div/span[4]').text.replace(',', '')
+                                                            '1]/div/span/table/tbody/tr/td[2]/div/span[4]').text.replace(
+                        ',', '')
                     city = driver.find_element(By.XPATH,
                                                '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
                                                '2]/div[3]/div[1]/div[1]/table/tbody/tr[1]/td['
@@ -1486,7 +1485,8 @@ def url_31(request, url):
                         ',', '')
                     zip = driver.find_element(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
                                                         '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr[1]/td['
-                                                        '1]/div/span/table/tbody/tr/td[2]/div/span[7]').text.replace(',', '')
+                                                        '1]/div/span/table/tbody/tr/td[2]/div/span[7]').text.replace(
+                        ',', '')
 
                     if not UrlResults.objects.filter(
                             record_id=id, date=date).first():
@@ -1622,10 +1622,9 @@ def var_checker(data):
         return data.text
     return ''
 
-   # next_page = current data
-   # while next_page
-        # for i in range(0, 10):
-            # if i == 9:
-                # scrape the data
-                #
-
+# next_page = current data
+# while next_page
+# for i in range(0, 10):
+# if i == 9:
+# scrape the data
+#
