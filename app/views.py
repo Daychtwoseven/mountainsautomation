@@ -1580,7 +1580,6 @@ def url_33(request, url):
             id = td[2].text
             name = td[5].text
             status = td[7].text
-            print('here')
             if td[2].find_elements(By.TAG_NAME, 'a'):
                 wait = WebDriverWait(driver, 10)
                 td[2].find_element(By.TAG_NAME, 'a').click()
