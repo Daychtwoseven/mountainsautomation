@@ -115,6 +115,11 @@ def index_page(request, action=None):
                             url_25, url_26, url_27, url_28, url_29, url_30, url_31, url_32, url_33, url_34]
 
                 counter = 0
+                for i in Urls.objects.all():
+                    if i.is_active:
+                        print(f"Running City: {i.description}")
+                        url_func[counter](request, i)
+                """
                 threads = []
                 for i in Urls.objects.all():
                     if i.is_active:
@@ -126,6 +131,8 @@ def index_page(request, action=None):
 
                 for thread in threads:
                     thread.join()
+                """
+
 
                 return JsonResponse({'statusMsg': 'Success'}, status=200)
 
@@ -1576,7 +1583,6 @@ def url_34(request, url):
     time.sleep(30)
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
-        print(len(records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]))
         for row in records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
             td = row.find_elements(By.TAG_NAME, 'td')
             date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
