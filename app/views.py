@@ -1545,7 +1545,6 @@ def url_32(request, url):
 
 
 def url_33(request, url):
-    print('here')
     driver = chrome_driver()
     driver.get(url.url)
 
@@ -1578,8 +1577,7 @@ def url_33(request, url):
             td = records_tr[i].find_elements(By.TAG_NAME, 'td')
             date = td[1].text
             id = td[2].text
-            name = td[5].text
-            status = td[7].text
+            status = td[5].text
             if td[2].find_elements(By.TAG_NAME, 'a'):
                 wait = WebDriverWait(driver, 10)
                 td[2].find_element(By.TAG_NAME, 'a').click()
@@ -1614,8 +1612,7 @@ def url_33(request, url):
 
                     if not UrlResults.objects.filter(
                             record_id=id, date=date).first():
-                        UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
-                                                  owner=owner,
+                        UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                                   address=address, city=city, state=state, zip=zip)
                 driver.get(url.url)
                 wait.until(
