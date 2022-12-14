@@ -341,43 +341,84 @@ def url_4(request, url):
 
     end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
     driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
-    time.sleep(15)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-    time.sleep(15)
+    time.sleep(10)
 
-    records_table_tr = driver.find_elements(By.XPATH,
-                                            '/html/body/form/div[3]/div/div[7]/div[1]/table/tbody/tr/td/div[2]/div['
-                                            '3]/div/div/div[2]/div[2]/div[3]/div[1]/div/table/tbody/tr')
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = var_checker(td[1])
+            id = var_checker(td[2])
+            status = var_checker(td[6])
+            owner = None
+            address = None
+            city_text = None
+            state = None
+            city = None
+            zip = None
+            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
+                wait = WebDriverWait(driver, 10)
+                td[2].find_element(By.TAG_NAME, 'a').click()
+                wait.until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
+                owner = driver.find_elements(By.XPATH,
+                                             '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
+                                             '5]/div/div[3]/div[1]/div[1]/table/tbody/tr/td['
+                                             '2]/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr[1]/td')
 
-    for row in records_table_tr[2:-1]:
-        td = row.find_elements(By.TAG_NAME, 'td')
-        date = var_checker(td[1])
-        id = var_checker(td[2])
-        status = var_checker(td[5])
-        address_text = var_checker(td[4])
-        if status != "" and len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date).first():
-            href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
-            if href:
-                req = Request(
-                    url=href,
-                    headers={'User-Agent': 'Mozilla/5.0'}
-                )
-                webpage = urlopen(req).read()
-                soup = BeautifulSoup(webpage, 'lxml')
-                address = var_checker(soup.find('span', class_='contactinfo_addressline1'))
-                city_text = soup.find_all('span', class_='contactinfo_region')
-                city = var_checker(city_text[0]) if city_text else ''
-                state = var_checker(city_text[1]) if city_text else ''
-                zip = var_checker(city_text[2]) if city_text else ''
+                if not owner:
+                    owner = driver.find_elements(By.XPATH,
+                                                 '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
+                                                 '5]/div/div[3]/div[1]/div[1]/table/tbody/tr['
+                                                 '2]/td/div/span/table/tbody/tr/td/table/tbody/tr/td['
+                                                 '2]/table/tbody/tr[1]/td')
 
-                firstname = var_checker(soup.find('span', class_='contactinfo_firstname'))
-                lastname = var_checker(soup.find('span', class_='contactinfo_lastname'))
+                    address = driver.find_elements(By.XPATH,
+                                                  '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
+                                                  '5]/div/div[3]/div[1]/div[1]/table/tbody/tr['
+                                                  '2]/td/div/span/table/tbody/tr/td/table/tbody/tr/td['
+                                                  '2]/table/tbody/tr[2]/td')
 
-                applicant = f"{firstname} {lastname}"
+                    city_text = driver.find_elements(By.XPATH,
+                                                    '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
+                                                    '5]/div/div[3]/div[1]/div[1]/table/tbody/tr['
+                                                    '2]/td/div/span/table/tbody/tr/td/table/tbody/tr/td['
+                                                    '2]/table/tbody/tr[3]/td')
 
-                UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address, city=city,
-                                          state=state, zip=zip, applicant=applicant)
+
+                if owner:
+                    owner = f"{var_checker(owner[0])}"
+                    address = var_checker(
+                        driver.find_element(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
+                                                      '5]/div/div[3]/div[1]/div[1]/table/tbody/tr/td['
+                                                      '2]/div/span/table/tbody/tr/td/table/tbody/tr/td['
+                                                      '2]/table/tbody/tr[2]/td')) if not address else var_checker(address[0])
+
+                    city_text = var_checker(
+                        driver.find_element(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div['
+                                                      '1]/div[3]/div[5]/div/div[3]/div[1]/div['
+                                                      '1]/table/tbody/tr/td['
+                                                      '2]/div/span/table/tbody/tr/td/table/tbody/tr/td['
+                                                      '2]/table/tbody/tr[3]/td')) if not city_text else var_checker(city_text[0])
+
+                    city = city_text.split(' ')[0]
+
+                    state = city_text.split(' ')[1]
+                    zip = city_text.split(' ')[-1]
+
+                    if owner and not UrlResults.objects.filter(
+                            record_id=id, date=date).first():
+                        UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
+                                                  address=address, city=city, state=state, zip=zip)
+                driver.get(url.url)
+                wait.until(
+                    EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
 
     return True
 
@@ -1574,7 +1615,7 @@ def url_33(request, url):
             date = td[1].text
             id = td[2].text
             status = td[5].text
-            if td[2].find_elements(By.TAG_NAME, 'a'):
+            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
                 wait = WebDriverWait(driver, 10)
                 td[2].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
