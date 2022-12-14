@@ -67,10 +67,10 @@ WSGI_APPLICATION = 'main.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
+        'NAME': 'mountainsautomation',
         'USER': 'postgres',
-        'PASSWORD': 'Friend453!?',
-        'HOST': 'database-2.ci3mm9t0n9iu.us-east-1.rds.amazonaws.com',
+        'PASSWORD': '',
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
