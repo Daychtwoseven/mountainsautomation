@@ -380,17 +380,16 @@ def url_4(request, url):
                                                  '2]/table/tbody/tr[1]/td')
 
                     address = driver.find_elements(By.XPATH,
-                                                  '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
-                                                  '5]/div/div[3]/div[1]/div[1]/table/tbody/tr['
-                                                  '2]/td/div/span/table/tbody/tr/td/table/tbody/tr/td['
-                                                  '2]/table/tbody/tr[2]/td')
+                                                   '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
+                                                   '5]/div/div[3]/div[1]/div[1]/table/tbody/tr['
+                                                   '2]/td/div/span/table/tbody/tr/td/table/tbody/tr/td['
+                                                   '2]/table/tbody/tr[2]/td')
 
                     city_text = driver.find_elements(By.XPATH,
-                                                    '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
-                                                    '5]/div/div[3]/div[1]/div[1]/table/tbody/tr['
-                                                    '2]/td/div/span/table/tbody/tr/td/table/tbody/tr/td['
-                                                    '2]/table/tbody/tr[3]/td')
-
+                                                     '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
+                                                     '5]/div/div[3]/div[1]/div[1]/table/tbody/tr['
+                                                     '2]/td/div/span/table/tbody/tr/td/table/tbody/tr/td['
+                                                     '2]/table/tbody/tr[3]/td')
 
                 if owner:
                     owner = f"{var_checker(owner[0])}"
@@ -398,14 +397,16 @@ def url_4(request, url):
                         driver.find_element(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
                                                       '5]/div/div[3]/div[1]/div[1]/table/tbody/tr/td['
                                                       '2]/div/span/table/tbody/tr/td/table/tbody/tr/td['
-                                                      '2]/table/tbody/tr[2]/td')) if not address else var_checker(address[0])
+                                                      '2]/table/tbody/tr[2]/td')) if not address else var_checker(
+                        address[0])
 
                     city_text = var_checker(
                         driver.find_element(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div['
                                                       '1]/div[3]/div[5]/div/div[3]/div[1]/div['
                                                       '1]/table/tbody/tr/td['
                                                       '2]/div/span/table/tbody/tr/td/table/tbody/tr/td['
-                                                      '2]/table/tbody/tr[3]/td')) if not city_text else var_checker(city_text[0])
+                                                      '2]/table/tbody/tr[3]/td')) if not city_text else var_checker(
+                        city_text[0])
 
                     city = city_text.split(' ')[0]
 
@@ -1638,7 +1639,8 @@ def url_33(request, url):
                                                       '2]/td'))
 
                     owner_details = driver.find_elements(By.XPATH,
-                                                         '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
+                                                         '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
+                                                         '3]/div[ '
                                                          '5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr['
                                                          '2]/td/div/span/table/tbody/tr/td[2]/table/tbody/tr')
                     city_text = var_checker(owner_details[-1])
@@ -1726,16 +1728,17 @@ def url_35(request, url):
                 wait.until(
                     EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
                 owner = driver.find_elements(By.XPATH,
-                                             '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
-                                             '5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
+                                             '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
+                                             '2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
                                              '2]/div/span/table/tbody/tr/td[2]/table/tbody/tr[1]/td')
+                address = driver.find_elements(By.XPATH,
+                                               '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
+                                               '5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
+                                               '2]/div/span/table/tbody/tr/td[2]/table/tbody/tr[2]/td')
 
-                if owner:
+                if owner and address:
                     owner = f"{var_checker(owner[0])}"
-                    address = var_checker(
-                        driver.find_element(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
-                                                      '5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
-                                                      '2]/div/span/table/tbody/tr/td[2]/table/tbody/tr[2]/td'))
+                    address = var_checker(address[0])
 
                     city_text = driver.find_element(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div[2]/div['
                                                               '1]/div[3]/div[5]/div[2]/div[3]/div[1]/div['
