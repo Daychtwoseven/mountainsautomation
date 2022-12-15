@@ -106,6 +106,10 @@ def index_page(request, action=None):
                         url_req = url_34(request, url)
                     elif url.id == 35:
                         url_req = url_35(request, url)
+                    elif url.id == 36:
+                        url_req = url_36(request, url)
+                    elif url.id == 37:
+                        url_req = url_37(request, url)
                     if url_req:
                         return JsonResponse({'statusMsg': 'Success'}, status=200)
                     else:
@@ -114,7 +118,8 @@ def index_page(request, action=None):
                 url_func = [url_1, url_2, url_3, url_4, url_5, url_6, url_7, url_8, url_9, url_10, url_11, url_12,
                             url_13,
                             url_14, url_15, url_16, url_17, url_18, url_19, url_20, url_21, url_22, url_23, url_24,
-                            url_25, url_26, url_27, url_28, url_29, url_30, url_31, url_32, url_33, url_34, url_35]
+                            url_25, url_26, url_27, url_28, url_29, url_30, url_31, url_32, url_33, url_34, url_35,
+                            url_36, url_37]
 
                 counter = 0
                 success = 0
@@ -335,7 +340,7 @@ def url_3(request, url):
                     city = var_checker(city_text).split(' ')
                     counter = 0
                     for row in city:
-                        if containsNumber(row):
+                        if row.is_digit:
                             city.pop(counter)
                         elif row == 'FL':
                             city.pop(counter)
@@ -744,11 +749,10 @@ def url_14(request, url):
 
     date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
     date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    time.sleep(15)
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/SolarPV/Residential/NA')
-    time.sleep(15)
+    time.sleep(5)
 
     start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
     driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
@@ -756,10 +760,10 @@ def url_14(request, url):
     end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
     driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
 
-    time.sleep(15)
+    time.sleep(5)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-    time.sleep(15)
+    time.sleep(5)
 
     records_table = driver.find_element(By.XPATH, '/html/body/form/div[4]/div/div[7]/div[1]/table/tbody/tr/td/div['
                                                   '2]/div[3]/div/div/div[2]/div[2]/div[3]/div[1]/div/table')
@@ -770,33 +774,25 @@ def url_14(request, url):
         status = td[7].text
         description = td[4].text
         name = td[5].text
-        if not UrlResults.objects.filter(record_id=id, date=date).first():
-            href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
-            if href:
-                req = Request(
-                    url=href,
-                    headers={'User-Agent': 'Mozilla/5.0'}
-                )
+        address_text = var_checker(td[6])
+        if address_text and not UrlResults.objects.filter(record_id=id, date=date).first():
+            address = address_text.split(',')[0]
+            state = 'UT'
+            city_text = address_text.split(',')[-1].split(' ')
+            city = None
+            zip = city_text[-1].split('-')[0]
+            counter = 0
+            for row in city_text:
+                if row.isdigit():
+                    city_text.pop(counter)
+                elif row == 'UT' or row == '':
+                    city_text.pop(counter)
+                counter += 1
+            city_text.pop(-1)
+            city = ' '.join(city_text)
 
-                webpage = urlopen(req).read()
-                soup = BeautifulSoup(webpage, 'lxml')
-                address = soup.find('span', class_='contactinfo_addressline1').text
-                city_text = soup.find_all('span', class_='contactinfo_region')
-                city = city_text[0].text
-                state = city_text[1].text.replace(',', '')
-                zip = city_text[2].text
-
-                firstname = soup.find('span', class_='contactinfo_firstname').text
-                lastname = soup.find('span', class_='contactinfo_lastname').text
-                applicant = f"{firstname} {lastname}"
-
-                job_value_text = soup.find(id='ctl00_PlaceHolderMain_PermitDetailList1_tbADIList')
-                job_value = job_value_text.find('span', class_='ACA_SmLabel ACA_SmLabel_FontSize').text
-
-                UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
-                                          city=city, description=description, name=name, applicant=applicant,
-                                          job_value=job_value,
-                                          state=state, zip=zip)
+            UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
+                                      city=city, description=description, name=name, state=state, zip=zip)
 
     return True
 
@@ -1734,7 +1730,6 @@ def url_35(request, url):
 
     end_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate"]')
     driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
-
     time.sleep(5)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
@@ -1766,7 +1761,8 @@ def url_35(request, url):
                                                '5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
                                                '2]/div/span/table/tbody/tr/td[2]/table/tbody/tr[2]/td')
 
-                if owner and address:
+                if owner and address and not UrlResults.objects.filter(
+                            record_id=id, date=date).first():
                     owner = f"{var_checker(owner[0])}"
                     address = var_checker(address[0])
 
@@ -1779,13 +1775,91 @@ def url_35(request, url):
                     state = var_checker(city_text).split(' ')[1]
                     zip = var_checker(city_text).split(' ')[-1]
 
-                    if not UrlResults.objects.filter(
-                            record_id=id, date=date).first():
-                        UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
-                                                  address=address, city=city, state=state, zip=zip, name=name)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
+                                              address=address, city=city, state=state, zip=zip, name=name)
                 driver.get(url.url)
                 wait.until(
                     EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
+
+    return True
+
+
+def url_36(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+
+    select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
+    select.select_by_value('Building/Solar/NA/NA')
+    time.sleep(10)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(10)
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
+        td = row.find_elements(By.TAG_NAME, 'td')
+        date = datetime.strptime(td[1].text, '%m/%d/%Y').date()
+        id = var_checker(td[2])
+        status = var_checker(td[6])
+        description = var_checker(td[8])
+        name = var_checker(td[4])
+        address_text = var_checker(td[5]).split(',') if var_checker(td[5]) else None
+        if address_text and len(address_text[0].split(' ')) > 1 and date_start <= date <= date_end and not UrlResults.objects.filter(
+                record_id=id, date=date).first():
+            state = 'FL'
+            address = ' '.join(address_text[0].split(' ')[0:len(address_text[0].split(' ')) -2])
+            city = address_text[0].split(' ')[-2]
+            zip = address_text[0].split(' ')[-1]
+            UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
+                                      city=city, description=description, name=name,
+                                      state=state, zip=zip)
+
+    return True
+
+
+def url_37(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+
+    select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
+    select.select_by_value('Building/Residential/Solar/NA')
+    time.sleep(5)
+
+    start_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate"]')
+    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
+
+    end_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate"]')
+    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
+    time.sleep(5)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(10)
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
+        td = row.find_elements(By.TAG_NAME, 'td')
+        date = var_checker(td[1])
+        id = var_checker(td[2])
+        status = var_checker(td[6])
+        name = var_checker(td[5])
+        address_text = var_checker(td[4]).split(',') if var_checker(td[4]) else None
+        if address_text and date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
+            state = 'VA'
+            address = address_text[0].split(' ')[0:3]
+            city = address_text[0].split(' ')[-2:-1]
+            zip = address_text[1].split(' ')[2]
+            print(address)
+            """
+            UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
+                                      city=city, name=name, state=state, zip=zip)
+            """
+
 
     return True
 
@@ -1817,11 +1891,11 @@ def beautifulsoup(url):
     soup = BeautifulSoup(webpage, 'lxml')
     return soup
 
+
 def containsNumber(value):
     if True in [char.isdigit() for char in value]:
         return True
     return False
-
 
 # next_page = current data
 # while next_page
