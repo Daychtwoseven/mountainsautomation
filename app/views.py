@@ -277,55 +277,85 @@ def url_3(request, url):
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Residential/Solar/NA')
-    time.sleep(15)
+    time.sleep(5)
 
     start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
     driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
 
     end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
     driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
-    time.sleep(15)
+    time.sleep(5)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-    time.sleep(15)
+    time.sleep(5)
 
     records_table_tr = driver.find_elements(By.XPATH, '/html/body/form/div[4]/div/div[7]/div['
                                                       '1]/table/tbody/tr/td/div[2]/div[3]/div/div/div['
                                                       '2]/div[2]/div[3]/div[1]/div/table/tbody/tr')
-    for row in records_table_tr[2:-1]:
-        td = row.find_elements(By.TAG_NAME, 'td')
-        date = td[1].text
-        id = td[2].text
-        status = td[8].text
-        name = td[4].text
-        description = td[5].text
-        if status != "" and not UrlResults.objects.filter(record_id=id, date=date).first():
-            href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
-            if href:
-                req = Request(
-                    url=href,
-                    headers={'User-Agent': 'Mozilla/5.0'}
-                )
-                webpage = urlopen(req).read()
-                soup = BeautifulSoup(webpage, 'lxml')
-                address = soup.find('span', class_='contactinfo_addressline1').text
 
-                city_text = soup.find_all('span', class_='contactinfo_region')
-                city = city_text[0].text
-                state = city_text[1].text
-                zip = city_text[2].text
+    if records_table_tr:
+        for i in range(0, len(records_table_tr[2:-1])):
+            records_table_tr = driver.find_elements(By.XPATH, '/html/body/form/div[4]/div/div[7]/div['
+                                                              '1]/table/tbody/tr/td/div[2]/div[3]/div/div/div['
+                                                              '2]/div[2]/div[3]/div[1]/div/table/tbody/tr')[2:-1]
+            td = records_table_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = var_checker(td[1])
+            id = var_checker(td[2])
+            status = var_checker(td[8])
+            name = var_checker(td[4])
+            description = var_checker(td[5])
+            if td[2].find_elements(By.TAG_NAME, 'a'):
+                wait = WebDriverWait(driver, 10)
+                td[2].find_element(By.TAG_NAME, 'a').click()
+                wait.until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
+                owner = driver.find_elements(By.XPATH,
+                                             '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
+                                             '2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
+                                             '2]/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr[1]/td')
+                address = driver.find_elements(By.XPATH,
+                                               '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
+                                               '2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
+                                               '2]/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr['
+                                               '2]/td')
+                job_value = driver.find_elements(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div['
+                                                           '2]/div[1]/div[3]/div[5]/div[2]/div[3]/div['
+                                                           '1]/div[2]/table/tbody/tr[2]/td[2]/div/span['
+                                                           '1]/table/tbody/tr[2]/td/div/div/span[2]')
+                if owner and address and not UrlResults.objects.filter(record_id=id, date=date).first():
+                    owner = f"{var_checker(owner[0])}"
+                    address = var_checker(address[0])
 
-                firstname = soup.find('span', class_='contactinfo_firstname').text
-                lastname = soup.find('span', class_='contactinfo_lastname').text
+                    city_text = driver.find_element(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div[2]/div['
+                                                              '1]/div[3]/div[5]/div[2]/div[3]/div[1]/div['
+                                                              '1]/table/tbody/tr[2]/td['
+                                                              '2]/div/span/table/tbody/tr/td/table/tbody/tr/td['
+                                                              '2]/table/tbody/tr[3]/td')
+                    state = 'FL'
+                    city = var_checker(city_text).split(' ')
+                    counter = 0
+                    for row in city:
+                        if containsNumber(row):
+                            city.pop(counter)
+                        elif row == 'FL':
+                            city.pop(counter)
+                        counter += 1
 
-                applicant = f"{firstname} {lastname}"
+                    if len(var_checker(city_text).split(' ')[-1]) < 5:
+                        zip = var_checker(city_text).split(' ')[-2]
+                    elif len(var_checker(city_text).split(' ')[-1]) > 5:
+                        zip = var_checker(city_text).split(' ')[-1][0:5]
+                    elif len(var_checker(city_text).split(' ')[-1]) == 5:
+                        zip = var_checker(city_text).split(' ')[-1]
 
-                job_value_text = soup.find(id='trADIList')
-                job_value = job_value_text.find('span', class_='ACA_SmLabel ACA_SmLabel_FontSize').text
+                    UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
+                                              address=address, city=' '.join(city), state=state, zip=zip, owner=owner,
+                                              description=description,
+                                              job_value=var_checker(job_value[0]) if job_value else '')
 
-                UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
-                                          address=address, city=city, state=state, zip=zip, applicant=applicant,
-                                          description=description, job_value=job_value)
+                driver.get(url.url)
+                wait.until(
+                    EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
 
     return True
 
@@ -941,19 +971,19 @@ def url_18(request, url):
     time.sleep(5)
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
-    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-1]:
+    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
-        date = td[1].text
-        id = td[2].text
-        status = td[6].text
-        address_text = td[5].text
-        description = td[4].text
+        date = var_checker(td[1])
+        id = var_checker(td[2])
+        status = var_checker(td[6])
+        address_text = var_checker(td[5])
+        description = var_checker(td[4])
         address = address_text.split(',')[0]
         city_text = address_text.split(',')[1].split(' ')
         city = 'Alameda'
         state = 'CA'
         zip = city_text[-1]
-        if status != '' and status != "Pending" and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date).first():
             UrlResults.objects.create(url=url, record_id=id, description=description, date=date, status=status,
                                       address=address, city=city,
                                       state=state, zip=zip)
@@ -1786,6 +1816,12 @@ def beautifulsoup(url):
     webpage = urlopen(req).read()
     soup = BeautifulSoup(webpage, 'lxml')
     return soup
+
+def containsNumber(value):
+    if True in [char.isdigit() for char in value]:
+        return True
+    return False
+
 
 # next_page = current data
 # while next_page
