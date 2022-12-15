@@ -990,7 +990,7 @@ def url_18(request, url):
 def url_19(request, url):
     driver = chrome_driver()
     driver.get(url.url)
-    time.sleep(15)
+    time.sleep(5)
 
     permit_number = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSPermitNumber')
     permit_number.send_keys('PLEX')
@@ -1002,10 +1002,10 @@ def url_19(request, url):
 
     end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
     driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
-    time.sleep(15)
+    time.sleep(5)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-    time.sleep(15)
+    time.sleep(5)
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
@@ -1036,24 +1036,23 @@ def url_19(request, url):
                 if owner and address and not UrlResults.objects.filter(
                         record_id=id, date=date).first():
                     owner = f"{var_checker(owner[0])}"
+
+                    state = "Columbus"
                     address = var_checker(address[0])
-
-                    city_text = driver.find_element(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div[2]/div['
-                                                              '1]/div[3]/div[5]/div[2]/div[3]/div[1]/div['
-                                                              '1]/table/tbody/tr[2]/td[2]/div/span/table/tbody/tr/td['
-                                                              '2]/table/tbody/tr[3]/td')
-                    city = var_checker(city_text).split(' ')[0]
-
-                    state = var_checker(city_text).split(' ')[1]
+                    city = var_checker(driver.find_element(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div['
+                                                                     '2]/div[1]/div[3]/div[5]/div[2]/div[3]/div['
+                                                                     '1]/div[1]/table/tbody/tr[2]/td['
+                                                                     '2]/div/span/table/tbody/tr/td['
+                                                                     '2]/table/tbody/tr[3]/td'))
 
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
-                                              address=address, city=city, state=state, zip=zip, name=name)
+                                              address=address, city=city if city != 'COLUMBUS' and city != 'Columbus' else '', state=state,
+                                              description=description)
                 driver.get(url.url)
                 wait.until(
                     EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
 
     return True
-
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
