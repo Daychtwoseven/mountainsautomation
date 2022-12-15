@@ -27,6 +27,7 @@
             <th>State</th>
             <th>Zip</th>
             <th>Applicant</th>
+            <th>Owner</th>
             <th>Description</th>
             <th>Job Value</th>
             <th>Kw</th>
@@ -49,6 +50,7 @@
             <td>{% if row.state %} {{ row.state }} {% endif %}</td>
             <td>{% if row.zip %} {{ row.zip }} {% endif %}</td>
             <td>{% if row.applicant %} {{ row.applicant }} {% endif %}</td>
+            <td>{% if row.owner %} {{ row.owner }} {% endif %}</td>
             <td>{% if row.description %} {{ row.description|truncatechars:50 }} {% endif %}</td>
             <td>{% if row.job_value %} {{ row.job_value }} {% endif %}</td>
             <td>{% if row.kw %} {{ row.kw }} {% endif %}</td>

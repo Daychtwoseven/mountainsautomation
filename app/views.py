@@ -1054,41 +1054,6 @@ def url_19(request, url):
 
     return True
 
-    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
-    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
-        td = row.find_elements(By.TAG_NAME, 'td')
-        date = td[1].text
-        id = td[2].text
-        status = td[5].text
-        description = td[4].text
-        href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
-        if href and status != '' and status != "Pending" and not UrlResults.objects.filter(record_id=id,
-                                                                                           date=date).first():
-            req = Request(
-                url=href,
-                headers={'User-Agent': 'Mozilla/5.0'}
-            )
-
-            webpage = urlopen(req).read()
-            soup = BeautifulSoup(webpage, 'lxml')
-
-            firstname = soup.find('span', class_='contactinfo_firstname').text if soup.find('span',
-                                                                                            class_='contactinfo_firstname') else ''
-            lastname = soup.find('span', class_='contactinfo_lastname').text if soup.find('span',
-                                                                                          class_='contactinfo_lastname') else ''
-            applicant = f"{firstname} {lastname}"
-            address = soup.find('span', class_='contactinfo_addressline1').text if soup.find('span',
-                                                                                             class_='contactinfo_addressline1') else ''
-            city_text = soup.find_all('span', class_='contactinfo_region')
-            city = city_text[0].text
-            state = city_text[1].text
-            zip = city_text[2].text
-            UrlResults.objects.create(url=url, record_id=id, description=description, date=date, status=status,
-                                      address=address, applicant=applicant, city=city,
-                                      state=state, zip=zip)
-
-    return True
-
 
 def url_20(request, url):
     driver = chrome_driver()
