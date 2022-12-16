@@ -5,6 +5,8 @@ import bs4
 from bs4 import BeautifulSoup
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+from lxml import etree
+
 from .models import *
 
 # Selenium
@@ -110,6 +112,14 @@ def index_page(request, action=None):
                         url_req = url_36(request, url)
                     elif url.id == 37:
                         url_req = url_37(request, url)
+                    elif url.id == 38:
+                        url_req = url_38(request, url)
+                    elif url.id == 39:
+                        url_req = url_39(request, url)
+                    elif url.id == 40:
+                        url_req = url_40(request, url)
+                    elif url.id == 41:
+                        url_req = url_41(request, url)
                     if url_req:
                         return JsonResponse({'statusMsg': 'Success'}, status=200)
                     else:
@@ -119,7 +129,7 @@ def index_page(request, action=None):
                             url_13,
                             url_14, url_15, url_16, url_17, url_18, url_19, url_20, url_21, url_22, url_23, url_24,
                             url_25, url_26, url_27, url_28, url_29, url_30, url_31, url_32, url_33, url_34, url_35,
-                            url_36, url_37]
+                            url_36, url_37, url_38, url_39, url_40, url_41]
 
                 counter = 0
                 success = 0
@@ -408,10 +418,11 @@ def url_4(request, url):
                                              '2]/td/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr['
                                              '1]/td')
 
-                address = driver.find_elements(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
-                                                  '5]/div/div[3]/div[1]/div[1]/table/tbody/tr['
-                                                  '2]/td/div/span/table/tbody/tr/td/table/tbody/tr/td['
-                                                  '2]/table/tbody/tr[2]/td')
+                address = driver.find_elements(By.XPATH,
+                                               '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
+                                               '5]/div/div[3]/div[1]/div[1]/table/tbody/tr['
+                                               '2]/td/div/span/table/tbody/tr/td/table/tbody/tr/td['
+                                               '2]/table/tbody/tr[2]/td')
                 if owner and address:
                     owner = var_checker(owner[0])
                     address = var_checker(address[0])
@@ -597,32 +608,59 @@ def url_9(request, url):
 def url_10(request, url):
     driver = chrome_driver()
     driver.get(url.url)
-    time.sleep(15)
     date_start = datetime.strptime(
         datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
     date_end = datetime.strptime(
         datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
-    time.sleep(15)
 
-    records_table = driver.find_element(By.CLASS_NAME, 'ACA_GridView ACA_Grid_Caption')
+    driver.find_element(By.XPATH, '/html/body/section/div[1]/a').click()
+
+    search = driver.find_element(By.ID, 'txtSearchCondition')
+    search.send_keys('solar')
+
+    time.sleep(5)
+
+    driver.find_element(By.ID, 'btnSearch').click()
+
+    time.sleep(10)
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
         date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
         id = td[1].text
         status = td[2].text
         name = td[6].text
-        address_text = td[7].text.split(',')
 
-        if status != '' and len(address_text) > 1 and date_start <= date <= date_end and not UrlResults.objects.filter(
+        if td[1].find_elements(By.TAG_NAME, 'a') and date_start <= date <= date_end and not UrlResults.objects.filter(
                 record_id=id, date=date).first():
-            address = address_text[0]
-            city = address_text[1]
-            state = 'FL'
-            zip = address_text[2].split(' ')[1][4]
+            wait = WebDriverWait(driver, 10)
+            td[1].find_element(By.TAG_NAME, 'a').click()
+            wait.until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
+            owner = driver.find_elements(By.XPATH,
+                                         '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
+                                         '2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td[2]/div/span/table/tbody/tr/td['
+                                         '2]/table/tbody/tr[1]/td')
 
-            UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status, address=address,
-                                      city=city,
-                                      state=state, zip=zip)
+            address = driver.find_elements(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
+                                                     '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr['
+                                                     '2]/td[2]/div/span/table/tbody/tr/td[2]/table/tbody/tr['
+                                                     '2]/td')
+
+            if owner and address:
+                owner = var_checker(owner[0])
+                address = var_checker(address[0])
+                city_text = driver.find_element(By.XPATH,
+                                                '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td[2]/div/span/table/tbody/tr/td[2]/table/tbody/tr[3]/td')
+                city = 'Plantation'
+                zip = city_text.split(' ')[-1]
+                state = 'ZIP'
+                UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
+                                          address=address, city=city, state=state, zip=zip, name=name)
+            driver.get(url.url)
+            wait.until(
+                EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
 
     return True
 
@@ -1521,11 +1559,6 @@ def url_31(request, url):
                                                           '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr['
                                                           '1]/td[1]/div/span/table/tbody/tr/td[2]/div/span[2]')
 
-                applicant = None
-                address = None
-                city = None
-                state = None
-                zip = None
                 if firstname and lastname:
                     applicant = f"{firstname[0].text} {lastname[0].text}"
                     address = driver.find_element(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
@@ -1854,6 +1887,296 @@ def url_37(request, url):
     return True
 
 
+def url_38(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+
+    select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
+    select.select_by_value('Building/Permits/Solar - Photovoltaic Permit/Permit')
+    time.sleep(5)
+
+    start_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate"]')
+    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
+
+    end_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate"]')
+    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
+    time.sleep(5)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(5)
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = var_checker(td[1])
+            id = var_checker(td[2])
+            description = var_checker(td[4])
+            status = var_checker(td[9])
+            name = var_checker(td[5])
+            address_text = var_checker(td[6])
+            address = address_text.split(',')[0].replace('City of San Antonio', '')
+            city = 'San Antonio'
+            zip = address_text.split(',')[-1].split(' ')[-1]
+            state = 'TX'
+            if not UrlResults.objects.filter(
+                    record_id=id, date=date).first():
+                UrlResults.objects.create(url=url, record_id=id, date=date, status=status, description=description,
+                                          address=address, city=city, state=state, zip=zip, name=name)
+
+    return True
+
+
+def url_39(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+
+    select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
+    select.select_by_value('Building/Residential/Solar PV/NA')
+    time.sleep(5)
+
+    start_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate"]')
+    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
+
+    end_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate"]')
+    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
+    time.sleep(5)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(5)
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = var_checker(td[1])
+            id = var_checker(td[2])
+            description = var_checker(td[5])
+            status = var_checker(td[7])
+            name = var_checker(td[6])
+            address_text = var_checker(td[4])
+            address = address_text.split(',')[0]
+            city = 'Atlanta'
+            zip = address_text.split(',')[-1].split(' ')[-1]
+            state = 'GA'
+            if td[2].find_elements(By.TAG_NAME, 'a'):
+                wait = WebDriverWait(driver, 10)
+                td[2].find_element(By.TAG_NAME, 'a').click()
+                wait.until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
+                owner = driver.find_elements(By.XPATH,
+                                             '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
+                                             '2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
+                                             '2]/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr[1]/td')
+
+                if owner and not UrlResults.objects.filter(
+                        record_id=id, date=date).first():
+                    owner = f"{var_checker(owner[0])}"
+                    UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
+                                              address=address, city=city, state=state, zip=zip, name=name,
+                                              description=description)
+                driver.get(url.url)
+                wait.until(
+                    EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
+
+    return True
+
+
+def url_40(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
+
+    select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
+    select.select_by_value('Building/Solar/NA/NA')
+    time.sleep(5)
+
+    start_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate"]')
+    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
+
+    end_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate"]')
+    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
+    time.sleep(5)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(5)
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = var_checker(td[1])
+            id = var_checker(td[2])
+            description = var_checker(td[8])
+            status = var_checker(td[6])
+            name = var_checker(td[4])
+            address_text = var_checker(td[5])
+            address = address_text.split(',')[0]
+            city = 'DELAND'
+            zip = address_text.split(',')[-1].split(' ')[-1]
+            state = 'FL'
+            if td[2].find_elements(By.TAG_NAME, 'a'):
+                wait = WebDriverWait(driver, 10)
+                td[2].find_element(By.TAG_NAME, 'a').click()
+                wait.until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
+                owner = driver.find_elements(By.XPATH,
+                                             '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
+                                             '2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
+                                             '2]/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr[1]/td')
+
+                if owner and not UrlResults.objects.filter(
+                        record_id=id, date=date).first():
+                    owner = f"{var_checker(owner[0])}"
+                    UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
+                                              address=address, city=city, state=state, zip=zip, name=name,
+                                              description=description)
+                driver.get(url.url)
+                wait.until(
+                    EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
+
+    return True
+
+
+def url_41(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+
+    records_table = driver.find_element(By.XPATH, '/html/body/form/div[3]/div/div[7]/div['
+                                                  '1]/table/tbody/tr/td/div/table/tbody/tr[1]/td/div/div/div/div/div['
+                                                  '2]/table')
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.XPATH, '/html/body/form/div[3]/div/div[7]/div['
+                                                          '1]/table/tbody/tr/td/div/table/tbody/tr['
+                                                          '1]/td/div/div/div/div/div[ '
+                                                          '2]/table')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            name = var_checker(td[5])
+            status = var_checker(td[6])
+            if td[1].find_elements(By.TAG_NAME,
+                                   'a') and date_start <= date <= date_end and not UrlResults.objects.filter(
+                    record_id=id, date=date).first():
+                wait = WebDriverWait(driver, 10)
+                td[1].find_element(By.TAG_NAME, 'a').click()
+                wait.until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
+                owner = driver.find_elements(By.XPATH,
+                                             '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
+                                             '2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
+                                             '2]/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr[1]/td')
+
+                address = driver.find_elements(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
+                                                         '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
+                                                         '2]/div/span/table/tbody/tr/td/table/tbody/tr/td['
+                                                         '2]/table/tbody/tr[2]/td')
+                city_text = driver.find_elements(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
+                                                           '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr['
+                                                           '2]/td[2]/div/span/table/tbody/tr/td/table/tbody/tr/td['
+                                                           '2]/table/tbody/tr[3]/td')
+                if owner and address and city_text:
+                    owner = var_checker(owner[0])
+                    address = var_checker(address[0])
+                    city_text = var_checker(city_text[0])
+
+                    city = 'Tampa'
+                    zip = city_text.split(' ')[-1].split('-')[0]
+                    state = 'FL'
+                    UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
+                                              address=address, city=city, state=state, zip=zip, name=name)
+                driver.get(url.url)
+                wait.until(
+                    EC.presence_of_element_located((By.XPATH, '/html/body/form/div[3]/div/div[7]/div['
+                                                              '1]/table/tbody/tr/td/div/table/tbody/tr['
+                                                              '1]/td/div/div/div/div/div[ '
+                                                              '2]/table')))
+
+    return True
+
+
+def url_42(request, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+
+    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
+    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+
+    driver.find_element(By.ID, 'txtSearchCondition').send_keys('solar')
+    time.sleep(5)
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(5)
+
+    records_table = driver.find_element(By.XPATH, '/html/body/form/div[3]/div/div[7]/div['
+                                                  '1]/table/tbody/tr/td/div/table/tbody/tr[1]/td/div/div/div/div/div['
+                                                  '2]/table')
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.XPATH, '/html/body/form/div[3]/div/div[7]/div['
+                                                          '1]/table/tbody/tr/td/div/table/tbody/tr['
+                                                          '1]/td/div/div/div/div/div[ '
+                                                          '2]/table')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[6])
+            name = var_checker(td[5])
+
+            if td[1].find_elements(By.TAG_NAME, 'a'):
+                wait = WebDriverWait(driver, 10)
+                td[2].find_element(By.TAG_NAME, 'a').click()
+                wait.until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
+                owner = driver.find_elements(By.XPATH,
+                                             '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
+                                             '2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
+                                             '2]/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr[1]/td')
+
+                if owner and not UrlResults.objects.filter(
+                        record_id=id, date=date).first():
+                    owner = f"{var_checker(owner[0])}"
+                    UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
+                                              address=address, city=city, state=state, zip=zip, name=name,
+                                              description=description)
+                driver.get(url.url)
+                wait.until(
+                    EC.presence_of_element_located((By.ID, '/html/body/form/div[3]/div/div[7]/div['
+                                                          '1]/table/tbody/tr/td/div/table/tbody/tr[1]/td/div/div/div/div/div['
+                                                          '2]/table')))
+
+    return True
+
+
 def chrome_driver():
     options = Options()
     options.headless = True
@@ -1876,7 +2199,6 @@ def beautifulsoup(url):
         url=url,
         headers={'User-Agent': 'Mozilla/5.0'}
     )
-
     webpage = urlopen(req).read()
     soup = BeautifulSoup(webpage, 'lxml')
     return soup
