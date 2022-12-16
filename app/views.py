@@ -120,6 +120,8 @@ def index_page(request, action=None):
                         url_req = url_40(request, url)
                     elif url.id == 41:
                         url_req = url_41(request, url)
+                    elif url.id == 42:
+                        url_req = url_42(request, url)
                     if url_req:
                         return JsonResponse({'statusMsg': 'Success'}, status=200)
                     else:
@@ -2084,7 +2086,7 @@ def url_41(request, url):
             status = var_checker(td[6])
             if td[1].find_elements(By.TAG_NAME,
                                    'a') and date_start <= date <= date_end and not UrlResults.objects.filter(
-                    record_id=id, date=date).first():
+                record_id=id, date=date).first():
                 wait = WebDriverWait(driver, 10)
                 td[1].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -2129,50 +2131,31 @@ def url_42(request, url):
     date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
     date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
 
-    driver.find_element(By.ID, 'txtSearchCondition').send_keys('solar')
-    time.sleep(5)
-    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-    time.sleep(5)
-
-    records_table = driver.find_element(By.XPATH, '/html/body/form/div[3]/div/div[7]/div['
+    records_table = driver.find_element(By.XPATH, '/html/body/form/div[4]/div/div[7]/div['
                                                   '1]/table/tbody/tr/td/div/table/tbody/tr[1]/td/div/div/div/div/div['
                                                   '2]/table')
     if records_table:
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
-            records_table = driver.find_element(By.XPATH, '/html/body/form/div[3]/div/div[7]/div['
+            records_table = driver.find_element(By.XPATH, '/html/body/form/div[4]/div/div[7]/div['
                                                           '1]/table/tbody/tr/td/div/table/tbody/tr['
-                                                          '1]/td/div/div/div/div/div[ '
-                                                          '2]/table')
+                                                          '1]/td/div/div/div/div/div[2]/table')
             records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
                          3:-2]
             td = records_tr[i].find_elements(By.TAG_NAME, 'td')
-            date = date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
             id = var_checker(td[1])
-            status = var_checker(td[6])
+            status = var_checker(td[7])
             name = var_checker(td[5])
-
-            if td[1].find_elements(By.TAG_NAME, 'a'):
-                wait = WebDriverWait(driver, 10)
-                td[2].find_element(By.TAG_NAME, 'a').click()
-                wait.until(
-                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
-                owner = driver.find_elements(By.XPATH,
-                                             '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
-                                             '2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
-                                             '2]/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr[1]/td')
-
-                if owner and not UrlResults.objects.filter(
-                        record_id=id, date=date).first():
-                    owner = f"{var_checker(owner[0])}"
-                    UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
-                                              address=address, city=city, state=state, zip=zip, name=name,
-                                              description=description)
-                driver.get(url.url)
-                wait.until(
-                    EC.presence_of_element_located((By.ID, '/html/body/form/div[3]/div/div[7]/div['
-                                                          '1]/table/tbody/tr/td/div/table/tbody/tr[1]/td/div/div/div/div/div['
-                                                          '2]/table')))
+            address_text = var_checker(td[6])
+            if date_start <= date <= date_end and len(address_text) > 1 and not UrlResults.objects.filter(
+                    record_id=id, date=date).first():
+                address = address_text.split(',')[0]
+                city = 'Visalia'
+                zip = address_text.split(',')[-1].split(' ')[-1]
+                state = 'CA'
+                UrlResults.objects.create(url=url, record_id=id, date=date, status=status,
+                                          address=address, city=city, state=state, zip=zip, name=name, )
 
     return True
 
