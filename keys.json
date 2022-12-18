@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "mountainsautomation",
+  "private_key_id": "df86920bf558e68c05f6f24e2707c644581ed992",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC7b0qFTrI1msf0\nMKBrF2vfp/SswOgysK58sgwCRtkgsX5aL66AUME3ghY0G2/sYkpj9V6f4BhKg1Sv\nUZebgpyt5IewLl7rF8Hw2D1GLg9edfP9rGUXekP7tHec9F12ZUngL/fgb+RayFlK\nyMV1NBwNHCbcfjTKNmAYSYGrMO3qHDU0di+LEKhSxDZS8YrGnCf9O2N/mfPJl+wl\nCaIbvVxCET9debGGs6HRLoTVEnuQwR90w8vbLH3NnO688m7Xo6p0ooOaZ+TCUoW1\nJthvmzLlcgHqQSbKU7XU5RgD1IO3n1KhmQ1MAsDUpWgI7VYi9ygKGq21fg03Es0d\nYx0aFzpJAgMBAAECggEAEdliTlmVLPelbQKodCpR0oWrDjx8oD8lDqjh7eGTUcK1\nVp9Nzdhi3gdcV+/485jUnrpCHZV4mrfw+5UYi+2fQAwQQ93Wmiq0BFyDUUiXnBY9\nev3MzrSM/s5Lyb2XnOu+YkQPJedh5qdHoZCHBUdGGJWCueKm4k7VTdrKJ2RMc8u8\nE+NOopxrezsFtVtGErDp4syQKHUc38cUNWZDGZ5k1aU7lnF0XkGngvSAByfzX8Q4\nKEuD03rmBc0OT0rxn7PWs+veElViprvdI3p2sS64Sl+Hb0hWC/+kTmgKAGnsy1mD\nzpfbKBAgk71n3fwsd2TMsuDY71EzWFJl38PSykuARQKBgQDpOrvWsouebXNyXydV\nhMid0SBoyPjmpWyMWp9xeOasHecXpCVBfM48GB4L44j7HUXobvRB909EMRSryag2\n3k73ozWPVmodbDxb6GhcBU3MuSNvuh03BLRV5VfVhe7+YT4HbGgwkJDXeUul1+PE\nOc8S7mHO4PRb2Afpv6pMaflFuwKBgQDNu/p6uxtUJ5Tmjo44dUPJBnj0rsiKAgCi\nBFB91r+d4twLmSDNaO+z4Vg3Kbvu99NTtwbJTkdnHSozRErL3Li6NhqhEhfojox3\nrlMCUOUG9sjQ1PbiWFHLkVucJBFcmB71ozfDgkC0FBnockGK34wVSRucaeH60KKH\nEQdYC8hdywKBgC+vAW5wzJjUedD9YVZbsoSJmB20USce1SWQ9Z5GgKrZ5kBwH+nW\nsXeZ2rLFj2D/6CYQYUIHZR5lBnvk285z/yMkLDQlD8b6NRD5YDTIJNLhWzxhic2Q\n2aniHOYb3vQFP6BW6qpbNDHJq8y5aejZhNuy/y5D0dHhRiTlOdUrqXo3AoGAYXAZ\nNo1taRMCC5wSsZygSRI+sSwioHJIWHOQp7jQsfdi3j9c8Mw1Us10WVPzxT8soGZ7\n2VWwrZ57gSJkBl94QgEj5YtLNYJl9rziZaNohT7WZ0ml0BeiTbZ/W9kdO+x0JURz\nQa5r9J3ck2GhtyMfFmm0oQTo2UB86VlgUAvsjrcCgYBZ0XJdfGK1fUk9syEGQAbo\n7eRxrX3pXtb6MIa66pKFvMGEe/poJsiChjx0XkleqOwgRHfFwa4pQHLrP2q4Urp6\n1Rs5s8uRLCIQYo/FCc5rSS/Bx5Ys1yr9NhOfYUW3uMrJfdWtRrOO2tEfF2eAfn/+\nvK8wEJS9xXDAQUAikzzBGA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "mountainsautomation@mountainsautomation.iam.gserviceaccount.com",
+  "client_id": "109878432957116778779",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/mountainsautomation%40mountainsautomation.iam.gserviceaccount.com"
+}

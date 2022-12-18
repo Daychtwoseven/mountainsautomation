@@ -5,7 +5,6 @@ import bs4
 from bs4 import BeautifulSoup
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from lxml import etree
 
 from .models import *
 
@@ -18,8 +17,10 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from datetime import datetime
+from gsheetapi import main
 import threading
 import time
+import random
 
 
 def index_page(request, action=None):
@@ -107,6 +108,7 @@ def url_1(request, url):
     records_table_tr = driver.find_elements(By.XPATH, '/html/body/form/div[4]/div/div[7]/div['
                                                       '1]/table/tbody/tr/td/div[2]/div[3]/div/div/div['
                                                       '2]/div[2]/div[3]/div[1]/div/table/tbody/tr')
+    values = []
     for row in records_table_tr[2:-1]:
         td = row.find_elements(By.TAG_NAME, 'td')
         date = var_checker(td[1])
@@ -140,10 +142,30 @@ def url_1(request, url):
                 job_value_text = soup.find(id='ctl00_PlaceHolderMain_PermitDetailList1_tdADIContent')
                 value = job_value_text.find('span', class_='ACA_SmLabel_FontSize').text
 
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    description,
+                    address,
+                    city,
+                    state,
+                    zip,
+                    applicant,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                ]
+
+                values.append(temp_values)
                 UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name, address=address,
                                           city=city, state=state, zip=zip, applicant=applicant, description=description,
                                           job_value=value)
-
+    main(url.description, values)
     return True
 
 
@@ -172,6 +194,7 @@ def url_2(request, url):
     records_table_tr = driver.find_elements(By.XPATH, '/html/body/form/div[4]/div/div[7]/div['
                                                       '1]/table/tbody/tr/td/div[2]/div[3]/div/div/div['
                                                       '2]/div[2]/div[3]/div[1]/div/table/tbody/tr')
+    values = []
     for row in records_table_tr[2:-1]:
         td = row.find_elements(By.TAG_NAME, 'td')
         date = td[1].text
@@ -194,9 +217,29 @@ def url_2(request, url):
                 city = 'San Diego'
                 state = 'CA'
                 zip = None
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    description,
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                ]
+
+                values.append(temp_values)
                 UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name, address=address,
                                           city=city, state=state, zip=zip, description=description)
-
+    main(url.description, values)
     return True
 
 
@@ -226,6 +269,7 @@ def url_3(request, url):
                                                       '2]/div[2]/div[3]/div[1]/div/table/tbody/tr')
 
     if records_table_tr:
+        values = []
         for i in range(0, len(records_table_tr[2:-1])):
             records_table_tr = driver.find_elements(By.XPATH, '/html/body/form/div[4]/div/div[7]/div['
                                                               '1]/table/tbody/tr/td/div[2]/div[3]/div/div/div['
@@ -250,45 +294,61 @@ def url_3(request, url):
                                                '2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
                                                '2]/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr['
                                                '2]/td')
-                job_value = driver.find_elements(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div['
-                                                           '2]/div[1]/div[3]/div[5]/div[2]/div[3]/div['
-                                                           '1]/div[2]/table/tbody/tr[2]/td[2]/div/span['
-                                                           '1]/table/tbody/tr[2]/td/div/div/span[2]')
-                if owner and address and not UrlResults.objects.filter(record_id=id, date=date).first():
+                job_value = driver.find_elements(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div['
+                                                           '3]/div[5]/div[2]/div[3]/div[1]/div[2]/table/tbody/tr['
+                                                           '2]/td[2]/div/span[1]/table/tbody/tr[2]/td/div/div/span[2]')
+                if owner and address and job_value and not UrlResults.objects.filter(record_id=id, date=date).first():
                     owner = f"{var_checker(owner[0])}"
                     address = var_checker(address[0])
 
-                    city_text = driver.find_element(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div[2]/div['
-                                                              '1]/div[3]/div[5]/div[2]/div[3]/div[1]/div['
-                                                              '1]/table/tbody/tr[2]/td['
-                                                              '2]/div/span/table/tbody/tr/td/table/tbody/tr/td['
-                                                              '2]/table/tbody/tr[3]/td')
+                    city_text = var_checker(
+                        driver.find_element(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div[2]/div['
+                                                      '1]/div[3]/div[5]/div[2]/div[3]/div[1]/div['
+                                                      '1]/table/tbody/tr[2]/td['
+                                                      '2]/div/span/table/tbody/tr/td/table/tbody/tr/td['
+                                                      '2]/table/tbody/tr[3]/td')).split(' ')
+
+                    if len(city_text) <= 2:
+                        city_text = var_checker(
+                            driver.find_element(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div['
+                                                          '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr['
+                                                          '2]/td[2]/div/span/table/tbody/tr/td/table/tbody/tr/td['
+                                                          '2]/table/tbody/tr[4]/td')).split(' ')
                     state = 'FL'
-                    city = var_checker(city_text).split(' ')
-                    counter = 0
-                    for row in city:
-                        if row.isdigit:
-                            city.pop(counter)
-                        elif row == 'FL':
-                            city.pop(counter)
-                        counter += 1
+                    zip = city_text[-1].split('-')[0]
+                    city_text.pop(-1)
+                    city_text.pop(-1)
+                    city = ' '.join(city_text)
 
-                    if len(var_checker(city_text).split(' ')[-1]) < 5:
-                        zip = var_checker(city_text).split(' ')[-2]
-                    elif len(var_checker(city_text).split(' ')[-1]) > 5:
-                        zip = var_checker(city_text).split(' ')[-1][0:5]
-                    elif len(var_checker(city_text).split(' ')[-1]) == 5:
-                        zip = var_checker(city_text).split(' ')[-1]
-
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        description,
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        owner,
+                        var_checker(job_value[0]),
+                        '',
+                        '',
+                        '',
+                    ]
+                    values.append(temp_values)
+                    print(var_checker(job_value[0]) if job_value else '')
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
                                               address=address, city=' '.join(city), state=state, zip=zip, owner=owner,
                                               description=description,
-                                              job_value=var_checker(job_value[0]) if job_value else '')
+                                              job_value=var_checker(job_value[0]))
 
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
-
+        main(url.description, values)
     return True
 
 
@@ -312,6 +372,7 @@ def url_4(request, url):
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+        values = []
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
             records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
@@ -358,12 +419,32 @@ def url_4(request, url):
 
                     if owner and not UrlResults.objects.filter(
                             record_id=id, date=date).first():
+                        temp_values = [
+                            url.description,
+                            str(date),
+                            id,
+                            status,
+                            '',
+                            '',
+                            address,
+                            city,
+                            state,
+                            zip,
+                            '',
+                            owner,
+                            '',
+                            '',
+                            '',
+                            '',
+                        ]
+
+                        values.append(temp_values)
                         UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                                   address=address, city=city, state=state, zip=zip)
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
-
+        main(url.description, values)
     return True
 
 
@@ -377,6 +458,7 @@ def url_5(request, url):
     time.sleep(15)
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    values = []
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
         date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
@@ -390,9 +472,30 @@ def url_5(request, url):
             city = address_text[1] if len(address_text) else ''
             state = 'KY'
             zip = address_text[2].split(' ')[2] if len(address_text) > 1 else ''
+
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                name,
+                '',
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address, city=city,
                                       state=state, zip=zip, name=name)
-
+    main(url.description, values)
     return True
 
 
@@ -405,6 +508,7 @@ def url_6(request, url):
         datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -421,10 +525,30 @@ def url_6(request, url):
             state = 'VA'
             zip = address_text[2].split(' ')[2]
 
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                name,
+                '',
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status, address=address,
                                       city=city,
                                       state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -437,6 +561,7 @@ def url_7(request, url):
         datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -453,10 +578,30 @@ def url_7(request, url):
             state = 'VA'
             zip = address_text[2].split(' ')[2]
 
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                name,
+                '',
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status, address=address,
                                       city=city,
                                       state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -469,6 +614,7 @@ def url_8(request, url):
         datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -485,10 +631,30 @@ def url_8(request, url):
             state = 'FL'
             zip = address_text[2].split(' ')[2]
 
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                name,
+                '',
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status, address=address,
                                       city=city,
                                       state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -501,6 +667,7 @@ def url_9(request, url):
         datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -517,10 +684,30 @@ def url_9(request, url):
             state = 'FL'
             zip = address_text[2].split(',')[-1][0:6]
 
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                name,
+                '',
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status, address=address,
                                       city=city,
                                       state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -545,6 +732,7 @@ def url_10(request, url):
 
     time.sleep(10)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -577,12 +765,33 @@ def url_10(request, url):
                 city = 'Plantation'
                 zip = city_text.split(' ')[-1]
                 state = 'ZIP'
+
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    '',
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    owner,
+                    '',
+                    '',
+                    '',
+                    '',
+                ]
+
+                values.append(temp_values)
                 UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                           address=address, city=city, state=state, zip=zip, name=name)
         driver.get(url.url)
         wait.until(
             EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
-
+    main(url.description, values)
     return True
 
 
@@ -595,6 +804,7 @@ def url_11(request, url):
         datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -611,10 +821,30 @@ def url_11(request, url):
             state = 'FL'
             zip = address_text[-1].split(' ')[1]
 
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                name,
+                '',
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status, address=address,
                                       city=city,
                                       state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -627,6 +857,7 @@ def url_12(request, url):
         datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -643,10 +874,30 @@ def url_12(request, url):
             state = 'CO'
             zip = address_text[2].split(' ')[2]
 
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                name,
+                '',
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status, address=address,
                                       city=city,
                                       state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -659,6 +910,7 @@ def url_13(request, url):
         datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -673,10 +925,30 @@ def url_13(request, url):
             state = 'CA'
             zip = address_text[2].split(' ')[2]
 
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                '',
+                '',
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
                                       city=city,
                                       state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -702,6 +974,7 @@ def url_14(request, url):
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(5)
 
+    values = []
     records_table = driver.find_element(By.XPATH, '/html/body/form/div[4]/div/div[7]/div[1]/table/tbody/tr/td/div['
                                                   '2]/div[3]/div/div/div[2]/div[2]/div[3]/div[1]/div/table')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
@@ -728,9 +1001,29 @@ def url_14(request, url):
             city_text.pop(-1)
             city = ' '.join(city_text)
 
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                name,
+                description,
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
                                       city=city, description=description, name=name, state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -756,6 +1049,7 @@ def url_15(request, url):
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -772,10 +1066,30 @@ def url_15(request, url):
             city = city_text[1]
             state = 'CA'
             zip = city_text[-1:][0]
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                name,
+                description,
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
                                       city=city, description=description, name=name,
                                       state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -801,6 +1115,7 @@ def url_16(request, url):
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(5)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -834,10 +1149,30 @@ def url_16(request, url):
                         city_text = td[2].text.split(' ')
                         state = 'NV'
                         zip = city_text[-2]
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    description,
+                    address,
+                    city,
+                    state,
+                    zip,
+                    applicant,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                ]
+
+                values.append(temp_values)
                 UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
                                           city=city, description=description, name=name, applicant=applicant,
                                           state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -863,6 +1198,7 @@ def url_17(request, url):
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -876,9 +1212,29 @@ def url_17(request, url):
         state = 'CA'
         zip = city_text[-1]
         if status != '' and status != "Pending" and not UrlResults.objects.filter(record_id=id, date=date).first():
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                '',
+                '',
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address, city=city,
                                       state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -903,6 +1259,7 @@ def url_18(request, url):
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(5)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -917,10 +1274,30 @@ def url_18(request, url):
         state = 'CA'
         zip = city_text[-1]
         if len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date).first():
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                '',
+                description,
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, description=description, date=date, status=status,
                                       address=address, city=city,
                                       state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -946,6 +1323,7 @@ def url_19(request, url):
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(5)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
@@ -984,6 +1362,26 @@ def url_19(request, url):
                                                                      '2]/div/span/table/tbody/tr/td['
                                                                      '2]/table/tbody/tr[3]/td'))
 
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        '',
+                        description,
+                        address,
+                        city if city != 'COLUMBUS' and city != 'Columbus' else '',
+                        state,
+                        '',
+                        '',
+                        owner,
+                        '',
+                        '',
+                        '',
+                        '',
+                    ]
+
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                               address=address,
                                               city=city if city != 'COLUMBUS' and city != 'Columbus' else '',
@@ -992,7 +1390,7 @@ def url_19(request, url):
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
-
+    main(url.description, values)
     return True
 
 
@@ -1002,7 +1400,7 @@ def url_20(request, url):
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Permits/Residential/Solar/NA')
-    time.sleep(15)
+    time.sleep(5)
 
     date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
     date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
@@ -1014,38 +1412,66 @@ def url_20(request, url):
     driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
-    time.sleep(15)
+    time.sleep(5)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
-    for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
-        td = row.find_elements(By.TAG_NAME, 'td')
-        date = td[1].text
-        id = td[2].text
-        name = td[4].text
-        status = td[5].text
-        href = td[2].find_elements(By.TAG_NAME, 'a')
-        if href and not UrlResults.objects.filter(record_id=id, date=date).first():
-            req = Request(
-                url=href[0].get_attribute('href'),
-                headers={'User-Agent': 'Mozilla/5.0'}
-            )
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+        values = []
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = var_checker(td[1])
+            id = var_checker(td[2])
+            status = var_checker(td[5])
+            name = var_checker(td[4])
+            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
+                wait = WebDriverWait(driver, 10)
+                td[2].find_element(By.TAG_NAME, 'a').click()
+                wait.until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
 
-            webpage = urlopen(req).read()
-            soup = BeautifulSoup(webpage, 'lxml')
+                first_name = driver.find_elements(By.CLASS_NAME, 'contactinfo_firstname')
+                last_name = driver.find_elements(By.CLASS_NAME, 'contactinfo_lastname')
+                address = driver.find_elements(By.CLASS_NAME, 'contactinfo_addressline1')
+                city_text = driver.find_elements(By.CLASS_NAME, 'contactinfo_region')
 
-            firstname = soup.find('span', class_='contactinfo_firstname').text
-            lastname = soup.find('span', class_='contactinfo_lastname').text
-            applicant = f"{firstname} {lastname}"
-            address = soup.find('span', class_='contactinfo_addressline1').text if soup.find('span',
-                                                                                             class_='contactinfo_addressline1') else ''
-            city_text = soup.find_all('span', class_='contactinfo_region')
-            city = city_text[0].text.replace(',', '')
-            state = 'CA'
-            zip = city_text[2].text.split('-')[0].replace(',', '')
+                if first_name and last_name and address and city_text:
+                    applicant = f"{var_checker(first_name[0])} {var_checker(last_name[0])}"
+                    address = var_checker(address[0])
+                    state = 'UT'
+                    city = var_checker(city_text[0])
+                    zip = var_checker(city_text[-1]).split('-')[0]
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        '',
+                        applicant,
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
 
-            UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status,
-                                      address=address, applicant=applicant, city=city,
-                                      state=state, zip=zip)
+                    values.append(temp_values)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, status=status, applicant=applicant,
+                                              address=address, city=city, state=state, zip=zip, name=name)
+            driver.get(url.url)
+            wait.until(
+                EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
+        main(url.description, values)
 
     return True
 
@@ -1054,6 +1480,8 @@ def url_21(request, url):
     driver = chrome_driver()
     driver.get(url.url)
     time.sleep(15)
+
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -1069,10 +1497,30 @@ def url_21(request, url):
             city = address_text.split(',')[1]
             zip = address_text.split(',')[2].split(' ')[-1]
 
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                name,
+                description,
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status,
                                       address=address, city=city, description=description,
                                       state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -1099,6 +1547,7 @@ def url_22(request, url):
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -1116,10 +1565,30 @@ def url_22(request, url):
         if len(address_text) > 1 and status != '' and date_start <= date <= date_end and not UrlResults.objects.filter(
                 record_id=id,
                 date=date).first():
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                name,
+                description,
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, name=name, date=date, status=status,
                                       address=address, city=city, description=description,
                                       state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -1128,7 +1597,9 @@ def url_23(request, url):
     driver.get(url.url)
     date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
     date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
-    time.sleep(40)
+    time.sleep(30)
+
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -1143,9 +1614,29 @@ def url_23(request, url):
         if len(address_text) > 1 and status != '' and date_start <= date <= date_end and not UrlResults.objects.filter(
                 record_id=id,
                 date=date).first():
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                '',
+                '',
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status,
                                       address=address, city=city, state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -1156,6 +1647,8 @@ def url_24(request, url):
     date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
     date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
     time.sleep(15)
+
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -1170,9 +1663,29 @@ def url_24(request, url):
         if len(address_text) > 1 and status != '' and date_start <= date <= date_end and not UrlResults.objects.filter(
                 record_id=id,
                 date=date).first():
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                '',
+                '',
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status,
                                       address=address, city=city, state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -1200,6 +1713,7 @@ def url_25(request, url):
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
         for row in records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
@@ -1217,9 +1731,29 @@ def url_25(request, url):
             if len(address_text) > 1 and status != '' and date_start <= date <= date_end and not UrlResults.objects.filter(
                     record_id=id,
                     date=date).first():
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    description,
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                ]
+
+                values.append(temp_values)
                 UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
                                           address=address, city=city, state=state, zip=zip, description=description)
-
+        main(url.description, values)
         return True
 
 
@@ -1244,6 +1778,7 @@ def url_26(request, url):
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
         for row in records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
@@ -1260,9 +1795,30 @@ def url_26(request, url):
             if len(address_text) > 1 and status != '' and status != 'Pending' and not UrlResults.objects.filter(
                     record_id=id,
                     date=date).first():
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    '',
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
+
+                values.append(temp_values)
                 UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
                                           address=address, city=city, state=state, zip=zip)
-
+        main(url.description, values)
         return True
 
 
@@ -1287,6 +1843,7 @@ def url_27(request, url):
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
         for row in records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
@@ -1303,9 +1860,30 @@ def url_27(request, url):
             if len(address_text) > 1 and status != '' and status != 'Pending' and not UrlResults.objects.filter(
                     record_id=id,
                     date=date).first():
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    '',
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
+
+                values.append(temp_values)
                 UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
                                           address=address, city=city, state=state, zip=zip)
-
+        main(url.description, values)
         return True
 
 
@@ -1318,6 +1896,7 @@ def url_28(request, url):
     time.sleep(30)
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
+        values = []
         for row in records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
             td = row.find_elements(By.TAG_NAME, 'td')
             date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
@@ -1331,9 +1910,30 @@ def url_28(request, url):
             zip = address_text.split(',')[-1].split(' ')[-1]
             if len(address_text) > 1 and status != '' and status != 'Pending' and date_start <= date <= date_end and not UrlResults.objects.filter(
                     record_id=id, date=date).first():
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    '',
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
+
+                values.append(temp_values)
                 UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
                                           address=address, city=city, state=state, zip=zip)
-
+        main(url.description, values)
         return True
 
 
@@ -1346,6 +1946,7 @@ def url_29(request, url):
     time.sleep(30)
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
+        values = []
         for row in records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
             td = row.find_elements(By.TAG_NAME, 'td')
             date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
@@ -1359,9 +1960,30 @@ def url_29(request, url):
             zip = address_text.split(',')[-1].split(' ')[-1]
             if len(address_text) > 1 and status != '' and status != 'Pending' and date_start <= date <= date_end and not UrlResults.objects.filter(
                     record_id=id, date=date).first():
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    '',
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
+
+                values.append(temp_values)
                 UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
                                           address=address, city=city, state=state, zip=zip)
-
+        main(url.description, values)
         return True
 
 
@@ -1376,6 +1998,8 @@ def url_30(request, url):
     select = Select(driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_CapView_ddlModule"]'))
     select.select_by_value('Contractors')
     time.sleep(5)
+
+    values = []
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
         records_tr = records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
@@ -1427,13 +2051,34 @@ def url_30(request, url):
 
                 if date_start <= date <= date_end and not UrlResults.objects.filter(
                         record_id=id, date=date).first():
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        applicant,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
                                               applicant=applicant,
                                               address=address, city=city, state=state, zip=zip)
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')))
-
+        main(url.description, values)
         return True
 
 
@@ -1459,6 +2104,7 @@ def url_31(request, url):
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
         records_tr = records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
@@ -1506,13 +2152,34 @@ def url_31(request, url):
 
                     if not UrlResults.objects.filter(
                             record_id=id, date=date).first():
+                        temp_values = [
+                            url.description,
+                            str(date),
+                            id,
+                            status,
+                            name,
+                            '',
+                            address,
+                            city,
+                            state,
+                            zip,
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            ''
+                        ]
+
+                        values.append(temp_values)
                         UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
                                                   applicant=applicant,
                                                   address=address, city=city, state=state, zip=zip)
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
-
+        main(url.description, values)
         return True
 
 
@@ -1539,6 +2206,7 @@ def url_32(request, url):
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(15)
 
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -1552,10 +2220,30 @@ def url_32(request, url):
             city = 'Oakland'
             state = 'CA'
             zip = address_text.split(',')[1].split(' ')[-1]
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                '',
+                '',
+                description,
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ]
 
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
                                       city=city, description=description, state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -1584,6 +2272,7 @@ def url_33(request, url):
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
+        values = []
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
@@ -1628,12 +2317,33 @@ def url_33(request, url):
 
                     if not UrlResults.objects.filter(
                             record_id=id, date=date).first():
+                        temp_values = [
+                            url.description,
+                            str(date),
+                            id,
+                            status,
+                            '',
+                            '',
+                            address,
+                            city,
+                            state,
+                            zip,
+                            '',
+                            owner,
+                            '',
+                            '',
+                            '',
+                            '',
+                            ''
+                        ]
+
+                        values.append(temp_values)
                         UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                                   address=address, city=city, state=state, zip=zip)
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
-
+        main(url.description, values)
     return True
 
 
@@ -1646,6 +2356,7 @@ def url_34(request, url):
     time.sleep(30)
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
+        values = []
         for row in records_table[0].find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
             td = row.find_elements(By.TAG_NAME, 'td')
             date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
@@ -1659,10 +2370,31 @@ def url_34(request, url):
             zip = address_text.split(',')[-1].split(' ')[-1]
             if len(address_text) > 1 and date_start <= date <= date_end and not UrlResults.objects.filter(
                     record_id=id, date=date).first():
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    '',
+                    description,
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
+
+                values.append(temp_values)
                 UrlResults.objects.create(url=url, record_id=id, date=date, status=status, description=description,
                                           address=address, city=city, state=state, zip=zip)
-
-        return True
+        main(url.description, values)
+    return True
 
 
 def url_35(request, url):
@@ -1689,6 +2421,7 @@ def url_35(request, url):
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
+        values = []
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
@@ -1726,13 +2459,33 @@ def url_35(request, url):
 
                     state = var_checker(city_text).split(' ')[1]
                     zip = var_checker(city_text).split(' ')[-1]
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        owner,
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
 
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                               address=address, city=city, state=state, zip=zip, name=name)
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
-
+        main(url.description, values)
     return True
 
 
@@ -1749,7 +2502,7 @@ def url_36(request, url):
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(10)
-
+    values = []
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
@@ -1766,10 +2519,31 @@ def url_36(request, url):
             address = ' '.join(address_text[0].split(' ')[0:len(address_text[0].split(' ')) - 2])
             city = address_text[0].split(' ')[-2]
             zip = address_text[0].split(' ')[-1]
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                name,
+                description,
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ]
+
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
                                       city=city, description=description, name=name,
                                       state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -1794,6 +2568,7 @@ def url_37(request, url):
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(10)
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    values = []
     for row in records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]:
         td = row.find_elements(By.TAG_NAME, 'td')
         date = var_checker(td[1])
@@ -1807,10 +2582,30 @@ def url_37(request, url):
             address = ' '.join(address_text[0].split(' ')[0:-2])
             city = address_text[0].split(' ')[-1]
             zip = address_text[1].split(' ')[2]
+            temp_values = [
+                url.description,
+                str(date),
+                id,
+                status,
+                name,
+                '',
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ]
 
+            values.append(temp_values)
             UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
                                       city=city, name=name, state=state, zip=zip)
-
+    main(url.description, values)
     return True
 
 
@@ -1837,6 +2632,7 @@ def url_38(request, url):
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
+        values = []
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
@@ -1855,9 +2651,30 @@ def url_38(request, url):
             state = 'TX'
             if not UrlResults.objects.filter(
                     record_id=id, date=date).first():
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    description,
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
+
+                values.append(temp_values)
                 UrlResults.objects.create(url=url, record_id=id, date=date, status=status, description=description,
                                           address=address, city=city, state=state, zip=zip, name=name)
-
+        main(url.description, values)
     return True
 
 
@@ -1885,6 +2702,7 @@ def url_39(request, url):
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
+        values = []
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
@@ -1914,13 +2732,34 @@ def url_39(request, url):
                 if owner and not UrlResults.objects.filter(
                         record_id=id, date=date).first():
                     owner = f"{var_checker(owner[0])}"
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        description,
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        owner,
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                               address=address, city=city, state=state, zip=zip, name=name,
                                               description=description)
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
-
+        main(url.description, values)
     return True
 
 
@@ -1948,6 +2787,7 @@ def url_40(request, url):
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
+        values = []
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
@@ -1977,13 +2817,34 @@ def url_40(request, url):
                 if owner and not UrlResults.objects.filter(
                         record_id=id, date=date).first():
                     owner = f"{var_checker(owner[0])}"
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        description,
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        owner,
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                               address=address, city=city, state=state, zip=zip, name=name,
                                               description=description)
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
-
+        main(url.description, values)
     return True
 
 
@@ -2001,6 +2862,7 @@ def url_41(request, url):
     if records_table:
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
+            values = []
             records_table = driver.find_element(By.XPATH, '/html/body/form/div[3]/div/div[7]/div['
                                                           '1]/table/tbody/tr/td/div/table/tbody/tr['
                                                           '1]/td/div/div/div/div/div[ '
@@ -2040,6 +2902,27 @@ def url_41(request, url):
                     city = 'Tampa'
                     zip = city_text.split(' ')[-1].split('-')[0]
                     state = 'FL'
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        owner,
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                               address=address, city=city, state=state, zip=zip, name=name)
             driver.get(url.url)
@@ -2048,7 +2931,7 @@ def url_41(request, url):
                                                           '1]/table/tbody/tr/td/div/table/tbody/tr['
                                                           '1]/td/div/div/div/div/div[ '
                                                           '2]/table')))
-
+        main(url.description, values)
     return True
 
 
@@ -2063,6 +2946,7 @@ def url_42(request, url):
                                                   '1]/table/tbody/tr/td/div/table/tbody/tr[1]/td/div/div/div/div/div['
                                                   '2]/table')
     if records_table:
+        values = []
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.XPATH, '/html/body/form/div[4]/div/div[7]/div['
@@ -2082,9 +2966,30 @@ def url_42(request, url):
                 city = 'Visalia'
                 zip = address_text.split(',')[-1].split(' ')[-1]
                 state = 'CA'
-                UrlResults.objects.create(url=url, record_id=id, date=date, status=status,
-                                          address=address, city=city, state=state, zip=zip, name=name, )
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    '',
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
 
+                values.append(temp_values)
+                UrlResults.objects.create(url=url, record_id=id, date=date, status=status,
+                                          address=address, city=city, state=state, zip=zip, name=name)
+        main(url.description, values)
     return True
 
 
@@ -2116,6 +3021,7 @@ def url_43(request, url):
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
+        values = []
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
@@ -2160,7 +3066,27 @@ def url_43(request, url):
                         counter += 1
 
                     city = ' '.join(city_text)
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        description,
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        owner,
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
 
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                               address=address, city=city, state=state, zip=zip, name=name,
                                               description=description)
@@ -2168,7 +3094,7 @@ def url_43(request, url):
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
-
+        main(url.description, values)
     return True
 
 
@@ -2188,6 +3114,7 @@ def url_44(request, url):
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
+        values = []
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
@@ -2198,7 +3125,9 @@ def url_44(request, url):
             id = var_checker(td[2])
             status = var_checker(td[6])
             name = var_checker(td[4])
-            if date_start <= date <= date_end and td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if date_start <= date <= date_end and td[2].find_elements(By.TAG_NAME,
+                                                                      'a') and not UrlResults.objects.filter(
+                    record_id=id, date=date).first():
 
                 td[2].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -2217,13 +3146,34 @@ def url_44(request, url):
                     state = 'CA'
                     city = city_text[0]
                     zip = city_text[-1]
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        owner,
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                               address=address, city=city, state=state, zip=zip, name=name)
 
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
-
+        main(url.description, values)
     return True
 
 
@@ -2250,6 +3200,7 @@ def url_45(request, url):
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
+        values = []
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
@@ -2261,7 +3212,9 @@ def url_45(request, url):
             status = var_checker(td[5])
             name = var_checker(td[7])
             description = var_checker(td[8])
-            if td[1].find_elements(By.TAG_NAME, 'a') and 'solar' in description.lower() and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if td[1].find_elements(By.TAG_NAME,
+                                   'a') and 'solar' in description.lower() and not UrlResults.objects.filter(
+                    record_id=id, date=date).first():
                 wait = WebDriverWait(driver, 10)
                 td[1].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -2291,13 +3244,34 @@ def url_45(request, url):
                     city_text.pop(-1)
                     city_text.pop(-1)
                     city = ' '.join(city_text)
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        description,
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        owner,
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                               address=address, city=city, state=state, zip=zip, name=name,
                                               description=description)
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
-
+        main(url.description, values)
     return True
 
 
@@ -2324,6 +3298,7 @@ def url_46(request, url):
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
     if records_table:
+        values = []
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
@@ -2361,12 +3336,33 @@ def url_46(request, url):
                     city_text.pop(-1)
                     city_text.pop(-1)
                     city = ' '.join(city_text)
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        '',
+                        description,
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        owner,
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                               address=address, city=city, state=state, zip=zip, description=description)
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')))
-
+        main(url.description, values)
     return True
 
 
@@ -2379,6 +3375,7 @@ def url_47(request, url):
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
+        values = []
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
@@ -2389,7 +3386,9 @@ def url_47(request, url):
             id = var_checker(td[1])
             status = var_checker(td[7])
             name = var_checker(td[6])
-            if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
+                                                                      'a') and not UrlResults.objects.filter(
+                    record_id=id, date=date).first():
                 wait = WebDriverWait(driver, 10)
                 td[1].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -2421,12 +3420,33 @@ def url_47(request, url):
                     city_text.pop(-1)
                     city_text.pop(-1)
                     city = ' '.join(city_text)
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        owner,
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                               address=address, city=city, state=state, zip=zip, name=name)
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')))
-
+        main(url.description, values)
     return True
 
 
@@ -2439,6 +3459,7 @@ def url_48(request, url):
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
+        values = []
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
@@ -2449,7 +3470,9 @@ def url_48(request, url):
             id = var_checker(td[1])
             status = var_checker(td[7])
             name = var_checker(td[5])
-            if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
+                                                                      'a') and not UrlResults.objects.filter(
+                    record_id=id, date=date).first():
                 wait = WebDriverWait(driver, 10)
                 td[1].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -2476,11 +3499,33 @@ def url_48(request, url):
                     city_text.pop(-1)
                     city_text.pop(-1)
                     city = ' '.join(city_text)
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        owner,
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                               address=address, city=city, state=state, zip=zip, name=name)
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')))
+        main(url.description, values)
 
     return True
 
@@ -2495,6 +3540,7 @@ def url_49(request, url):
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+        values = []
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
             records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
@@ -2504,7 +3550,9 @@ def url_49(request, url):
             id = var_checker(td[1])
             status = var_checker(td[5])
             name = var_checker(td[3])
-            if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
+                                                                      'a') and not UrlResults.objects.filter(
+                    record_id=id, date=date).first():
                 wait = WebDriverWait(driver, 10)
                 td[1].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -2532,11 +3580,33 @@ def url_49(request, url):
                     city_text.pop(-1)
                     city_text.pop(-1)
                     city = ' '.join(city_text)
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        owner,
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                               address=address, city=city, state=state, zip=zip, name=name)
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')))
+        main(url.description, values)
 
     return True
 
@@ -2551,6 +3621,7 @@ def url_50(request, url):
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
         records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+        values = []
         for i in range(0, len(records_tr) - 1):
             records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
             records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
@@ -2560,7 +3631,9 @@ def url_50(request, url):
             id = var_checker(td[1])
             status = var_checker(td[5])
             name = var_checker(td[3])
-            if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
+                                                                      'a') and not UrlResults.objects.filter(
+                    record_id=id, date=date).first():
                 wait = WebDriverWait(driver, 10)
                 td[1].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -2588,11 +3661,33 @@ def url_50(request, url):
                     city_text.pop(-1)
                     city_text.pop(-1)
                     city = ' '.join(city_text)
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        owner,
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
                     UrlResults.objects.create(url=url, record_id=id, date=date, status=status, owner=owner,
                                               address=address, city=city, state=state, zip=zip, name=name)
             driver.get(url.url)
             wait.until(
                 EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')))
+        main(url.description, values)
 
     return True
 
