@@ -3595,26 +3595,6 @@ def url_50(date_start, date_end, url):
 
 
 def url_51(date_start, date_end, url):
-    driver = chrome_driver()
-    driver.get(url.url)
-    time.sleep(20)
-    wait = WebDriverWait(driver, 10)
-    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
-    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
-    print('1')
-    select = Select(driver.find_element(By.ID, 'PermitCriteria_SortBy'))
-    select.select_by_value('string:IssueDate')
-    time.sleep(20)
-    print('2')
-    select = Select(driver.find_element(By.ID, 'SortAscending'))
-    select.select_by_value('boolean:false')
-    time.sleep(20)
-    print('3')
-    ul = driver.find_element(By.ID, 'paginationList')
-    li = ul.find_elements(By.TAG_NAME, 'li')
-
-    for row in li:
-        print(row)
     return True
 
 
