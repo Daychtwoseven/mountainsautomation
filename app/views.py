@@ -35,11 +35,12 @@ def index_page(request, action=None):
                 return redirect('app-index-page')
         else:
             if request.method == "POST":
+                date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime(
+                    '%m/%d/%Y')
+                date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
                 if request.POST.get('url'):
                     url = Urls.objects.get(id=request.POST.get('url'))
-                    url_req = False
-                    message = None
-                    url_req = exec(f"url_{url.id}(request, url)")
+                    url_req = exec(f"url_{url.id}(date_start, date_end, url)")
                     return JsonResponse({'statusMsg': 'Success'}, status=200)
 
                 url_func = [url_1, url_2, url_3, url_4, url_5, url_6, url_7, url_8, url_9, url_10, url_11, url_12,
@@ -50,21 +51,10 @@ def index_page(request, action=None):
                             url_47, url_48, url_49, url_50]
 
                 counter = 0
-                success = 0
-                """
-                for i in Urls.objects.all():
-                    if i.is_active:
-                        print(f"Running City: {i.description}")
-                        url_req = url_func[counter](request, i)
-                        if url_req:
-                            success += 1
-                    counter += 1
-                """
-
                 threads = []
                 for i in Urls.objects.all():
                     if i.is_active:
-                        t = threading.Thread(target=url_func[counter], args=(request, i))
+                        t = threading.Thread(target=url_func[counter], args=(date_start, date_end, i))
                         t.start()
                         threads.append(t)
 
@@ -80,12 +70,9 @@ def index_page(request, action=None):
         return JsonResponse({'statusMsg': str(e)}, status=404)
 
 
-def url_1(request, url):
+def url_1(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSSubAgency'))
     select.select_by_value('RENO')
@@ -169,13 +156,11 @@ def url_1(request, url):
     return True
 
 
-def url_2(request, url):
+def url_2(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
 
     time.sleep(15)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('DSD/Project/Standalone/Photovoltaic')
@@ -243,12 +228,9 @@ def url_2(request, url):
     return True
 
 
-def url_3(request, url):
+def url_3(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Residential/Solar/NA')
@@ -352,13 +334,10 @@ def url_3(request, url):
     return True
 
 
-def url_4(request, url):
+def url_4(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
     driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
@@ -448,13 +427,9 @@ def url_4(request, url):
     return True
 
 
-def url_5(request, url):
+def url_5(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    date_start = datetime.strptime(
-        datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
-    date_end = datetime.strptime(
-        datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
     time.sleep(15)
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
@@ -499,13 +474,11 @@ def url_5(request, url):
     return True
 
 
-def url_6(request, url):
+def url_6(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    date_start = datetime.strptime(
-        datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
-    date_end = datetime.strptime(
-        datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
     time.sleep(15)
 
     values = []
@@ -552,13 +525,11 @@ def url_6(request, url):
     return True
 
 
-def url_7(request, url):
+def url_7(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    date_start = datetime.strptime(
-        datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
-    date_end = datetime.strptime(
-        datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
     time.sleep(15)
 
     values = []
@@ -605,13 +576,11 @@ def url_7(request, url):
     return True
 
 
-def url_8(request, url):
+def url_8(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    date_start = datetime.strptime(
-        datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
-    date_end = datetime.strptime(
-        datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
     time.sleep(15)
 
     values = []
@@ -658,13 +627,11 @@ def url_8(request, url):
     return True
 
 
-def url_9(request, url):
+def url_9(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    date_start = datetime.strptime(
-        datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
-    date_end = datetime.strptime(
-        datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
     time.sleep(15)
 
     values = []
@@ -711,15 +678,13 @@ def url_9(request, url):
     return True
 
 
-def url_10(request, url):
+def url_10(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
 
-    date_start = datetime.strptime(
-        datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
-    date_end = datetime.strptime(
-        datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     driver.find_element(By.XPATH, '/html/body/section/div[1]/a').click()
 
@@ -761,7 +726,9 @@ def url_10(request, url):
                 owner = var_checker(owner[0])
                 address = var_checker(address[0])
                 city_text = driver.find_element(By.XPATH,
-                                                '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td[2]/div/span/table/tbody/tr/td[2]/table/tbody/tr[3]/td')
+                                                '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[3]/div['
+                                                '5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
+                                                '2]/div/span/table/tbody/tr/td[2]/table/tbody/tr[3]/td')
                 city = 'Plantation'
                 zip = city_text.split(' ')[-1]
                 state = 'ZIP'
@@ -795,13 +762,11 @@ def url_10(request, url):
     return True
 
 
-def url_11(request, url):
+def url_11(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    date_start = datetime.strptime(
-        datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
-    date_end = datetime.strptime(
-        datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
     time.sleep(15)
 
     values = []
@@ -848,13 +813,11 @@ def url_11(request, url):
     return True
 
 
-def url_12(request, url):
+def url_12(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    date_start = datetime.strptime(
-        datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
-    date_end = datetime.strptime(
-        datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
     time.sleep(15)
 
     values = []
@@ -901,13 +864,11 @@ def url_12(request, url):
     return True
 
 
-def url_13(request, url):
+def url_13(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    date_start = datetime.strptime(
-        datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
-    date_end = datetime.strptime(
-        datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y'), '%m/%d/%Y').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
     time.sleep(15)
 
     values = []
@@ -952,12 +913,9 @@ def url_13(request, url):
     return True
 
 
-def url_14(request, url):
+def url_14(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/SolarPV/Residential/NA')
@@ -1027,13 +985,10 @@ def url_14(request, url):
     return True
 
 
-def url_15(request, url):
+def url_15(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     time.sleep(15)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Solar/NA/NA')
@@ -1093,13 +1048,10 @@ def url_15(request, url):
     return True
 
 
-def url_16(request, url):
+def url_16(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     time.sleep(5)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Residential/Solar/Permit')
@@ -1176,13 +1128,10 @@ def url_16(request, url):
     return True
 
 
-def url_17(request, url):
+def url_17(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     time.sleep(15)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Solar/PV/.')
@@ -1238,12 +1187,10 @@ def url_17(request, url):
     return True
 
 
-def url_18(request, url):
+def url_18(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     time.sleep(5)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Solar Photovoltaic System/Residential/NA')
@@ -1301,7 +1248,7 @@ def url_18(request, url):
     return True
 
 
-def url_19(request, url):
+def url_19(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
@@ -1310,8 +1257,6 @@ def url_19(request, url):
 
     permit_number = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSPermitNumber')
     permit_number.send_keys('PLEX')
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
     driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
@@ -1394,16 +1339,13 @@ def url_19(request, url):
     return True
 
 
-def url_20(request, url):
+def url_20(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Permits/Residential/Solar/NA')
     time.sleep(5)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
     driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
@@ -1476,7 +1418,7 @@ def url_20(request, url):
     return True
 
 
-def url_21(request, url):
+def url_21(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     time.sleep(15)
@@ -1524,7 +1466,7 @@ def url_21(request, url):
     return True
 
 
-def url_22(request, url):
+def url_22(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
 
@@ -1532,17 +1474,11 @@ def url_22(request, url):
     select.select_by_value('Building/Residential/PVR/Photovoltaic Residential')
     time.sleep(15)
 
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
-
-    date_start_str = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end_str = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-
     start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
-    driver.execute_script(f"arguments[0].value = '{date_start_str}'", start_date)
+    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
 
     end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
-    driver.execute_script(f"arguments[0].value = '{date_end_str}'", end_date)
+    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
     time.sleep(15)
@@ -1562,6 +1498,8 @@ def url_22(request, url):
         city = ' '.join(city_text.split(' ')[0:-2]) if city_text else ''
         state = 'CA'
         zip = city_text.split(' ')[-1][0:5] if city_text else ''
+        date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+        date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
         if len(address_text) > 1 and status != '' and date_start <= date <= date_end and not UrlResults.objects.filter(
                 record_id=id,
                 date=date).first():
@@ -1592,11 +1530,11 @@ def url_22(request, url):
     return True
 
 
-def url_23(request, url):
+def url_23(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
     time.sleep(30)
 
     values = []
@@ -1640,12 +1578,12 @@ def url_23(request, url):
     return True
 
 
-def url_24(request, url):
+def url_24(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     time.sleep(15)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
     time.sleep(15)
 
     values = []
@@ -1689,7 +1627,7 @@ def url_24(request, url):
     return True
 
 
-def url_25(request, url):
+def url_25(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
 
@@ -1697,17 +1635,11 @@ def url_25(request, url):
     select.select_by_value('Building/Residential/Solar/BRSP')
     time.sleep(15)
 
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
-
-    date_start_str = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end_str = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-
     start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
-    driver.execute_script(f"arguments[0].value = '{date_start_str}'", start_date)
+    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
 
     end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
-    driver.execute_script(f"arguments[0].value = '{date_end_str}'", end_date)
+    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
     time.sleep(15)
 
     driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
@@ -1728,6 +1660,8 @@ def url_25(request, url):
             address = address_text.split(',')[0] if len(address_text) > 1 else ''
             city = ''.join(address_text.split(',')[1].split(' ')[1:-2]) if len(address_text) > 1 else ''
             zip = address_text.split(',')[1].split(' ')[-1] if len(address_text) > 1 else ''
+            date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+            date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
             if len(address_text) > 1 and status != '' and date_start <= date <= date_end and not UrlResults.objects.filter(
                     record_id=id,
                     date=date).first():
@@ -1757,16 +1691,13 @@ def url_25(request, url):
         return True
 
 
-def url_26(request, url):
+def url_26(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Dev-Services/DS Residential/Electrical/Solar')
     time.sleep(15)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
     driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
@@ -1822,16 +1753,13 @@ def url_26(request, url):
         return True
 
 
-def url_27(request, url):
+def url_27(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Residential/Solar/NA')
     time.sleep(15)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
     driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
@@ -1887,11 +1815,11 @@ def url_27(request, url):
         return True
 
 
-def url_28(request, url):
+def url_28(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     time.sleep(30)
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
@@ -1937,11 +1865,11 @@ def url_28(request, url):
         return True
 
 
-def url_29(request, url):
+def url_29(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     time.sleep(30)
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
@@ -1987,13 +1915,13 @@ def url_29(request, url):
         return True
 
 
-def url_30(request, url):
+def url_30(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
 
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     select = Select(driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_CapView_ddlModule"]'))
     select.select_by_value('Contractors')
@@ -2082,7 +2010,7 @@ def url_30(request, url):
         return True
 
 
-def url_31(request, url):
+def url_31(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
@@ -2091,9 +2019,6 @@ def url_31(request, url):
         driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType"]'))
     select.select_by_value('PnD/Building/Miscellaneous_1/Electrical')
     time.sleep(5)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
     driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
@@ -2183,12 +2108,9 @@ def url_31(request, url):
         return True
 
 
-def url_32(request, url):
+def url_32(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
     time.sleep(15)
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
@@ -2247,13 +2169,10 @@ def url_32(request, url):
     return True
 
 
-def url_33(request, url):
+def url_33(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Building Department Web Permit/Residential Solar/NA')
@@ -2347,11 +2266,11 @@ def url_33(request, url):
     return True
 
 
-def url_34(request, url):
+def url_34(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     time.sleep(30)
     records_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
@@ -2397,13 +2316,10 @@ def url_34(request, url):
     return True
 
 
-def url_35(request, url):
+def url_35(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Residential/Solar/NA')
@@ -2489,12 +2405,12 @@ def url_35(request, url):
     return True
 
 
-def url_36(request, url):
+def url_36(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
 
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Solar/NA/NA')
@@ -2547,12 +2463,9 @@ def url_36(request, url):
     return True
 
 
-def url_37(request, url):
+def url_37(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Residential/Solar/NA')
@@ -2609,12 +2522,9 @@ def url_37(request, url):
     return True
 
 
-def url_38(request, url):
+def url_38(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Permits/Solar - Photovoltaic Permit/Permit')
@@ -2678,13 +2588,10 @@ def url_38(request, url):
     return True
 
 
-def url_39(request, url):
+def url_39(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Residential/Solar PV/NA')
@@ -2763,13 +2670,10 @@ def url_39(request, url):
     return True
 
 
-def url_40(request, url):
+def url_40(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Solar/NA/NA')
@@ -2848,13 +2752,13 @@ def url_40(request, url):
     return True
 
 
-def url_41(request, url):
+def url_41(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
 
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     records_table = driver.find_element(By.XPATH, '/html/body/form/div[3]/div/div[7]/div['
                                                   '1]/table/tbody/tr/td/div/table/tbody/tr[1]/td/div/div/div/div/div['
@@ -2935,12 +2839,12 @@ def url_41(request, url):
     return True
 
 
-def url_42(request, url):
+def url_42(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
 
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     records_table = driver.find_element(By.XPATH, '/html/body/form/div[4]/div/div[7]/div['
                                                   '1]/table/tbody/tr/td/div/table/tbody/tr[1]/td/div/div/div/div/div['
@@ -2993,13 +2897,10 @@ def url_42(request, url):
     return True
 
 
-def url_43(request, url):
+def url_43(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSSubAgency'))
     select.select_by_value('WASHOE')
@@ -3098,12 +2999,13 @@ def url_43(request, url):
     return True
 
 
-def url_44(request, url):
+def url_44(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Permits/Residential/Solar/NA')
@@ -3127,7 +3029,7 @@ def url_44(request, url):
             name = var_checker(td[4])
             if date_start <= date <= date_end and td[2].find_elements(By.TAG_NAME,
                                                                       'a') and not UrlResults.objects.filter(
-                    record_id=id, date=date).first():
+                record_id=id, date=date).first():
 
                 td[2].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -3177,12 +3079,10 @@ def url_44(request, url):
     return True
 
 
-def url_45(request, url):
+def url_45(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Trades/Electrical/NA')
@@ -3214,7 +3114,7 @@ def url_45(request, url):
             description = var_checker(td[8])
             if td[1].find_elements(By.TAG_NAME,
                                    'a') and 'solar' in description.lower() and not UrlResults.objects.filter(
-                    record_id=id, date=date).first():
+                record_id=id, date=date).first():
                 wait = WebDriverWait(driver, 10)
                 td[1].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -3275,12 +3175,10 @@ def url_45(request, url):
     return True
 
 
-def url_46(request, url):
+def url_46(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date().strftime('%m/%d/%Y')
 
     select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
     select.select_by_value('Building/Accessories/Residential/Solar Photovoltaic')
@@ -3366,12 +3264,13 @@ def url_46(request, url):
     return True
 
 
-def url_47(request, url):
+def url_47(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
@@ -3388,7 +3287,7 @@ def url_47(request, url):
             name = var_checker(td[6])
             if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
                                                                       'a') and not UrlResults.objects.filter(
-                    record_id=id, date=date).first():
+                record_id=id, date=date).first():
                 wait = WebDriverWait(driver, 10)
                 td[1].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -3450,12 +3349,13 @@ def url_47(request, url):
     return True
 
 
-def url_48(request, url):
+def url_48(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
@@ -3472,7 +3372,7 @@ def url_48(request, url):
             name = var_checker(td[5])
             if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
                                                                       'a') and not UrlResults.objects.filter(
-                    record_id=id, date=date).first():
+                record_id=id, date=date).first():
                 wait = WebDriverWait(driver, 10)
                 td[1].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -3530,12 +3430,13 @@ def url_48(request, url):
     return True
 
 
-def url_49(request, url):
+def url_49(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
@@ -3552,7 +3453,7 @@ def url_49(request, url):
             name = var_checker(td[3])
             if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
                                                                       'a') and not UrlResults.objects.filter(
-                    record_id=id, date=date).first():
+                record_id=id, date=date).first():
                 wait = WebDriverWait(driver, 10)
                 td[1].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -3611,12 +3512,13 @@ def url_49(request, url):
     return True
 
 
-def url_50(request, url):
+def url_50(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-    date_start = datetime.strptime(request.POST.get('date_start'), '%Y-%m-%d').date()
-    date_end = datetime.strptime(request.POST.get('date_end'), '%Y-%m-%d').date()
+
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
     if records_table:
@@ -3633,7 +3535,7 @@ def url_50(request, url):
             name = var_checker(td[3])
             if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
                                                                       'a') and not UrlResults.objects.filter(
-                    record_id=id, date=date).first():
+                record_id=id, date=date).first():
                 wait = WebDriverWait(driver, 10)
                 td[1].find_element(By.TAG_NAME, 'a').click()
                 wait.until(

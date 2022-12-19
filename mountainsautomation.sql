@@ -11,7 +11,7 @@
  Target Server Version : 80030
  File Encoding         : 65001
 
- Date: 18/12/2022 22:01:25
+ Date: 19/12/2022 22:19:40
 */
 
 SET NAMES utf8mb4;
@@ -45,20 +45,25 @@ CREATE TABLE `app_urlresults`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `app_urlresults_url_id_915b1b51_fk_app_urls_id`(`url_id`) USING BTREE,
   CONSTRAINT `app_urlresults_url_id_915b1b51_fk_app_urls_id` FOREIGN KEY (`url_id`) REFERENCES `app_urls` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 2629 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4331 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of app_urlresults
 -- ----------------------------
-INSERT INTO `app_urlresults` VALUES (4308, '2022-12-18 11:42:21.069319', 41, '2301 W Clinton St', NULL, 'Tampa', '2022-12-16', NULL, NULL, NULL, NULL, '2301 W Clinton St (ACA)', NULL, 'FL', 'Issued', NULL, NULL, '33604', 'BTR-23-0561947', 'Wilfredo Garcia *');
-INSERT INTO `app_urlresults` VALUES (4309, '2022-12-18 11:42:30.386099', 41, '10909 N Dixon Ave', NULL, 'Tampa', '2022-12-16', NULL, NULL, NULL, NULL, '10909 N Dixon Ave (ACA)', NULL, 'FL', 'In Process', NULL, NULL, '33612', 'BLD-23-0497997', 'Ashley Scott And Lianna Schumacher *');
-INSERT INTO `app_urlresults` VALUES (4310, '2022-12-18 11:42:41.582229', 41, '2414 E Clark St', NULL, 'Tampa', '2022-12-16', NULL, NULL, NULL, NULL, '2414 E Clark St (ACA)', NULL, 'FL', 'Issued', NULL, NULL, '33605', 'BTR-23-0561925', 'Isabelino And Emma Rosario *');
-INSERT INTO `app_urlresults` VALUES (4311, '2022-12-18 11:42:50.891771', 41, '8885 Tanglewood Pl Apt 836', NULL, 'Tampa', '2022-12-15', NULL, NULL, NULL, NULL, '8518 N Temple Ave (ACA)', NULL, 'FL', 'Issued', NULL, NULL, '33617', 'BTR-23-0561838', 'Sauvelmy And Sainte Therese Boss *');
-INSERT INTO `app_urlresults` VALUES (4312, '2022-12-18 11:42:59.695536', 41, '8508 N Dixon Ave', NULL, 'Tampa', '2022-12-15', NULL, NULL, NULL, NULL, '8508 N Dixon Ave (ACA)', NULL, 'FL', 'Issued', NULL, NULL, '33604', 'BTR-23-0561860', 'Jerry Lee Gant *');
-INSERT INTO `app_urlresults` VALUES (4313, '2022-12-18 11:43:08.901208', 41, '8722 N Hyaleah Rd', NULL, 'Tampa', '2022-12-15', NULL, NULL, NULL, NULL, '8722 N Hyaleah Rd (ACA)', NULL, 'FL', 'Issued', NULL, NULL, '33617', 'BTR-23-0561859', 'Omar S Gamboa *');
-INSERT INTO `app_urlresults` VALUES (4314, '2022-12-18 11:43:17.868565', 41, '218 County Road 291', NULL, 'Tampa', '2022-12-15', NULL, NULL, NULL, NULL, '6718 S Sheridan Rd (ACA)', NULL, 'FL', 'Issued', NULL, NULL, '79606', 'BTR-23-0561846', 'Christopher Wade Allmand *');
-INSERT INTO `app_urlresults` VALUES (4315, '2022-12-18 11:43:27.222463', 41, '2726 W Spruce St', NULL, 'Tampa', '2022-12-15', NULL, NULL, NULL, NULL, '2726 W Spruce St (ACA)', NULL, 'FL', 'Issued', NULL, NULL, '33607', 'BTR-23-0561849', 'Ruperto Rodriguez And Eustoquia Rosas *');
-INSERT INTO `app_urlresults` VALUES (4316, '2022-12-18 11:43:36.345458', 41, '1209 E Palifox St', NULL, 'Tampa', '2022-12-14', NULL, NULL, NULL, NULL, '1209 E Palifox St (ACA)', NULL, 'FL', 'Issued', NULL, NULL, '33603', 'BTR-23-0561810', 'Santos R Gonzalez *');
+INSERT INTO `app_urlresults` VALUES (4317, '2022-12-19 14:15:23.364781', 50, '1385 PALO VERDE DR', NULL, 'PHARR', '2022-12-15', NULL, NULL, NULL, NULL, '', NULL, 'TX', 'Plan Review', NULL, NULL, '78577', 'SOL2022-00280', 'PRUNEDA MARIA TERESA & ISRAEL PRUNEDA ET AL *');
+INSERT INTO `app_urlresults` VALUES (4318, '2022-12-19 14:17:05.229716', 47, '10505 ALCON BLUE DR', NULL, 'RIVERVIEW', '2022-12-19', NULL, NULL, NULL, NULL, '', NULL, 'FL', 'Issued', NULL, NULL, '33578', 'HC-BTR-22-0139184', 'GEORGE GREEN JR *');
+INSERT INTO `app_urlresults` VALUES (4319, '2022-12-19 14:17:05.828333', 21, '961 PIEDMONT DR', NULL, ' SACRAMENTO', '12/17/2022', 'EPC - Revised solar plans changed solar installer.', NULL, NULL, NULL, 'Revision to RES-2125728', NULL, 'CA', 'Plan Check Target', NULL, NULL, '95822', 'RES-2227078', NULL);
+INSERT INTO `app_urlresults` VALUES (4320, '2022-12-19 14:17:05.886851', 21, '2307 50TH AVE', NULL, ' SACRAMENTO', '12/16/2022', 'EPC - EXPEDITED - DETACHED ADU WITH 1.825kw SOLAR ADU $180,037 SOLAR $8000', NULL, NULL, NULL, 'New DETACHED ADU WITH 1.825kw SOLAR', NULL, 'CA', 'Applied', NULL, NULL, '95822', 'RES-2227042', NULL);
+INSERT INTO `app_urlresults` VALUES (4321, '2022-12-19 14:17:06.010886', 21, '8000 FOLSOM BLVD', NULL, ' SACRAMENTO', '12/16/2022', 'EPC - 563.76kw Solar PV System, and 0gal Solar WH System (water heater installed null).', NULL, NULL, NULL, 'solar 563.76 kw', NULL, 'CA', 'Applied', NULL, NULL, '95826', 'COM-2226941', NULL);
+INSERT INTO `app_urlresults` VALUES (4322, '2022-12-19 14:17:06.069892', 21, '4290 67TH ST', NULL, ' SACRAMENTO', '12/16/2022', 'EXPEDITED - EPC - ADU 396 sq ft 1.825 solar pv The landscaping for this project is required to be in compliance with the city’s Water Efficient Landscape Ordinance 15.92.', NULL, NULL, NULL, 'ADU', NULL, 'CA', 'Plan Check Target', NULL, NULL, '95820', 'RES-2227011', NULL);
+INSERT INTO `app_urlresults` VALUES (4323, '2022-12-19 14:17:06.127410', 21, '2095 OXFORD ST', NULL, ' SACRAMENTO', '12/16/2022', '', NULL, NULL, NULL, '', NULL, 'CA', 'Submittal Pending Review', NULL, NULL, '95815', 'SUB-2227013', NULL);
+INSERT INTO `app_urlresults` VALUES (4324, '2022-12-19 14:17:06.191927', 21, '31 VIERRA CT', NULL, ' SACRAMENTO', '12/16/2022', '10.40kw Solar PV System, and 0gal Solar WH System (water heater installed null). All supply side connections, main breaker change-out, and/or panel upgrade will require a second inspection. Carbon monoxide & Smoke alarms required. Reference CRC sections R', NULL, NULL, NULL, 'ROOF MOUNT PV 10.40KW', NULL, 'CA', 'Ready-to-Issue', NULL, NULL, '95831', 'RES-2227009', NULL);
+INSERT INTO `app_urlresults` VALUES (4325, '2022-12-19 14:17:06.249928', 21, '1521 SHERWOOD AVE', NULL, ' SACRAMENTO', '12/16/2022', '5.135kw Solar PV System, and 0gal Solar WH System (water heater installed null). All supply side connections, main breaker change-out, and/or panel upgrade will require a second inspection. Carbon monoxide & Smoke alarms required. Reference CRC sections R', NULL, NULL, NULL, 'ROOF MOUNT PV 5.135KW', NULL, 'CA', 'Ready-to-Issue', NULL, NULL, '95822', 'RES-2226928', NULL);
+INSERT INTO `app_urlresults` VALUES (4326, '2022-12-19 14:17:06.307961', 21, '1417 EGGPLANT ALY', NULL, ' SACRAMENTO', '12/16/2022', '', NULL, NULL, NULL, '', NULL, 'CA', 'Submittal Pending Review', NULL, NULL, '95814', 'SUB-2226969', NULL);
+INSERT INTO `app_urlresults` VALUES (4327, '2022-12-19 14:17:06.368965', 21, '854 VINCI AVE', NULL, ' SACRAMENTO', '12/16/2022', '', NULL, NULL, NULL, '', NULL, 'CA', 'Submittal Pending Review', NULL, NULL, '95838', 'SUB-2227001', NULL);
+INSERT INTO `app_urlresults` VALUES (4328, '2022-12-19 14:17:07.098283', 9, '1612 5TH NW 5 ST', NULL, ' FORT LAUDERDALE', '2022-12-19', NULL, NULL, NULL, NULL, 'Philippe Edouard', NULL, 'FL', 'Plan Set Submitted', NULL, NULL, ' 33311', 'ELE-SOL-22120025', NULL);
+INSERT INTO `app_urlresults` VALUES (4329, '2022-12-19 14:17:07.152283', 9, '1612 5TH NW 5 ST', NULL, ' FORT LAUDERDALE', '2022-12-19', NULL, NULL, NULL, NULL, 'Philippe Edouard', NULL, 'FL', 'Plan Set Submitted', NULL, NULL, ' 33311', 'BLD-SOL-22120034', NULL);
+INSERT INTO `app_urlresults` VALUES (4330, '2022-12-19 14:17:10.476029', 11, '31790 US HIGHWAY 19 ', NULL, ' APT 5', '2022-12-19', NULL, NULL, NULL, NULL, 'Twin Lakes', NULL, 'FL', 'Issued', NULL, NULL, '34684', 'EBP-22-21475', NULL);
 
 -- ----------------------------
 -- Table structure for app_urls
