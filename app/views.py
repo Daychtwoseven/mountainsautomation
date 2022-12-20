@@ -3674,8 +3674,6 @@ def url_51(date_start, date_end, url):
                                                   state=state, zip=zip, name=name)
             i += 1
             element_start_count += 1
-        elif not date:
-            break
 
     main(url.description, values)
     return True
