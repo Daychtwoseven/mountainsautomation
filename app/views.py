@@ -3595,6 +3595,80 @@ def url_50(date_start, date_end, url):
 
 
 def url_51(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    wait = WebDriverWait(driver, 10)
+    time.sleep(30)
+    select = Select(driver.find_element(By.ID, 'PermitCriteria_SortBy'))
+    select.select_by_value('string:IssueDate')
+
+    time.sleep(2)
+
+    select = Select(driver.find_element(By.ID, 'SortAscending'))
+    select.select_by_value('boolean:false')
+    time.sleep(10)
+
+    element_start_count = 9
+    values = []
+    for i in range(0, 299):
+        row = driver.find_element(By.ID, f'entityRecordDiv{i}')
+        date = row.find_elements(By.XPATH,
+                                 f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[{element_start_count}]/div[2]/div[5]/span')
+        if date:
+            date = datetime.strptime(date[0].text, '%m/%d/%Y').date()
+ 
+            date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+            date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+
+            if date_start <= date <= date_end:
+                id = row.find_element(By.XPATH,
+                                      f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[{element_start_count}]/div[2]/div[2]/a/tyler-highlight/span').text
+                address_text = row.find_element(By.XPATH,
+                                                f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[{element_start_count}]/div[2]/div[11]/tyler-highlight/span').text.split(
+                    ' ')
+                description = row.find_element(By.XPATH,
+                                               f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[{element_start_count}]/div[2]/div[12]/tyler-highlight/span').text
+                status = row.find_element(By.XPATH,
+                                          '/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[9]/div[2]/div[8]/label').text
+                name = row.find_element(By.XPATH,
+                                        '/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[9]/div[2]/div[6]/label').text
+
+                zip = address_text[-1]
+                state = address_text[-2]
+                city = address_text[-3]
+                address_text.pop(-1)
+                address_text.pop(-1)
+                address_text.pop(-1)
+                address = ' '.join(address_text)
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    description,
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
+                values.append(temp_values)
+                UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address, city=city,
+                                          state=state, zip=zip, name=name)
+
+        elif not date:
+            break
+
+        i += 1
+        element_start_count += 1
+    main(url.description, values)
     return True
 
 
