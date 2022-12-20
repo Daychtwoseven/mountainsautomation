@@ -48,7 +48,7 @@ def index_page(request, action=None):
                             url_14, url_15, url_16, url_17, url_18, url_19, url_20, url_21, url_22, url_23, url_24,
                             url_25, url_26, url_27, url_28, url_29, url_30, url_31, url_32, url_33, url_34, url_35,
                             url_36, url_37, url_38, url_39, url_40, url_41, url_42, url_43, url_44, url_45, url_46,
-                            url_47, url_48, url_49, url_50, url_51]
+                            url_47, url_48, url_49, url_50, url_51, url_52, url_53, url_54, url_55, url_56]
 
                 counter = 0
                 threads = []
@@ -3597,7 +3597,9 @@ def url_50(date_start, date_end, url):
 def url_51(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    wait = WebDriverWait(driver, 10)
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+
     time.sleep(30)
     select = Select(driver.find_element(By.ID, 'PermitCriteria_SortBy'))
     select.select_by_value('string:IssueDate')
@@ -3616,36 +3618,445 @@ def url_51(date_start, date_end, url):
                                  f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[{element_start_count}]/div[2]/div[5]/span')
         if date:
             date = datetime.strptime(date[0].text, '%m/%d/%Y').date()
- 
-            date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
-            date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
             if date_start <= date <= date_end:
                 id = row.find_element(By.XPATH,
                                       f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[{element_start_count}]/div[2]/div[2]/a/tyler-highlight/span').text
                 address_text = row.find_element(By.XPATH,
-                                                f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[{element_start_count}]/div[2]/div[11]/tyler-highlight/span').text.split(
+                                                f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div['
+                                                f'5]/div[2]/div[{element_start_count}]/div[2]/div['
+                                                f'11]/tyler-highlight/span').text.split(
                     ' ')
-                description = row.find_element(By.XPATH,
-                                               f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[{element_start_count}]/div[2]/div[12]/tyler-highlight/span').text
-                status = row.find_element(By.XPATH,
-                                          '/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[9]/div[2]/div[8]/label').text
-                name = row.find_element(By.XPATH,
-                                        '/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[9]/div[2]/div[6]/label').text
+                if len(address_text) > 1:
+                    description = row.find_element(By.XPATH,
+                                                   f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div['
+                                                   f'5]/div[ '
+                                                   f'2]/div[{element_start_count}]/div[2]/div['
+                                                   f'12]/tyler-highlight/span').text
+                    status = row.find_element(By.XPATH,
+                                              '/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div['
+                                              '2]/div[9]/div[2]/div[8]/label').text
+                    name = row.find_element(By.XPATH,
+                                            '/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div['
+                                            '2]/div[ '
+                                            '9]/div[2]/div[6]/label').text
 
-                zip = address_text[-1]
-                state = address_text[-2]
-                city = address_text[-3]
-                address_text.pop(-1)
-                address_text.pop(-1)
-                address_text.pop(-1)
-                address = ' '.join(address_text)
+                    zip = address_text[-1]
+                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date).first():
+                        state = address_text[-2]
+                        city = address_text[-3]
+                        address_text.pop(-1)
+                        address_text.pop(-1)
+                        address_text.pop(-1)
+                        address = ' '.join(address_text)
+                        temp_values = [
+                            url.description,
+                            str(date),
+                            id,
+                            status,
+                            name,
+                            description,
+                            address,
+                            city,
+                            state,
+                            zip,
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            ''
+                        ]
+                        values.append(temp_values)
+                        UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
+                                                  city=city,
+                                                  state=state, zip=zip, name=name)
+            i += 1
+            element_start_count += 1
+        elif not date:
+            break
+
+    main(url.description, values)
+    return True
+
+
+def url_52(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-1]
+        values = []
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[5])
+            address_text = var_checker(td[4])
+            if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
+                                                                      'a') and not UrlResults.objects.filter(
+                record_id=id, date=date).first():
+                address = address_text.split(',')[0]
+                city = 'CONCORD'
+                state = 'CA'
+                zip = address_text.split(',')[-1].split(' ')[-1]
+
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    '',
+                    '',
+                    address,
+                    'CONCORD',
+                    'CA',
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
+
+                values.append(temp_values)
+                UrlResults.objects.create(url=url, record_id=id, date=date, status=status,
+                                          address=address, city=city, state=state, zip=zip)
+        main(url.description, values)
+
+    return True
+
+
+def url_53(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    wait = WebDriverWait(driver, 10)
+
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-1]
+        values = []
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[6])
+            name = var_checker(td[5])
+            if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
+                                                                      'a') and not UrlResults.objects.filter(
+                record_id=id, date=date).first():
+                wait = WebDriverWait(driver, 10)
+                td[1].find_element(By.TAG_NAME, 'a').click()
+                wait.until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
+
+                address = driver.find_elements(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div['
+                                                         '3]/div[5]/div[1]/div[3]/div['
+                                                         '1]/div/div/table/tbody/tr/td/div/span/table/tbody/tr/td['
+                                                         '2]/span')
+                if address:
+                    address = var_checker(address[0])
+                    state = 'CA'
+                    city = 'Santa Rosa'
+                    zip = '95403'
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
+                                              city=city, state=state, zip=zip, name=name)
+
+            driver.get(url.url)
+            wait.until(
+                EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')))
+        main(url.description, values)
+
+    return True
+
+
+def url_54(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    wait = WebDriverWait(driver, 10)
+
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-1]
+        values = []
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[6])
+            name = var_checker(td[5])
+            if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
+                                                                      'a') and not UrlResults.objects.filter(
+                record_id=id, date=date).first():
+                wait = WebDriverWait(driver, 10)
+                td[1].find_element(By.TAG_NAME, 'a').click()
+                wait.until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
+
+                owner = driver.find_elements(By.XPATH,
+                                             '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
+                                             '2]/div[3]/div[1]/div[1]/table/tbody/tr['
+                                             '2]/td/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr['
+                                             '1]/td')
+
+                address = driver.find_elements(By.XPATH,
+                                               '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
+                                               '2]/div[3]/div[1]/div[1]/table/tbody/tr['
+                                               '2]/td/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr['
+                                               '2]/td')
+                if owner and address:
+                    owner = var_checker(owner[0])
+                    address = var_checker(address[0])
+                    state = 'AZ'
+                    city = 'Pima County'
+                    zip = '85719'
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
+                                              city=city, state=state, zip=zip, name=name, owner=owner)
+
+            driver.get(url.url)
+            wait.until(
+                EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')))
+        main(url.description, values)
+
+    return True
+
+
+def url_55(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    wait = WebDriverWait(driver, 10)
+
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-1]
+        values = []
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[5])
+            name = var_checker(td[3])
+            address_text = var_checker(td[4])
+            if address_text != '' and date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
+                                                                                             'a') and not UrlResults.objects.filter(
+                record_id=id, date=date).first():
+
+                address = address_text.split(',')[0]
+                state = 'CA'
+                city = 'Lake County'
+                zip = address_text.split(',')[-1].split(' ')[1]
                 temp_values = [
                     url.description,
                     str(date),
                     id,
                     status,
                     name,
+                    '',
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
+
+                values.append(temp_values)
+                UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
+                                          city=city, state=state, zip=zip, name=name)
+        main(url.description, values)
+
+    return True
+
+
+def url_56(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    wait = WebDriverWait(driver, 10)
+
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-1]
+        values = []
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[6])
+            name = var_checker(td[4])
+            address_text = var_checker(td[5])
+            if address_text != '' and date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
+                                                                                             'a') and not UrlResults.objects.filter(
+                record_id=id, date=date).first():
+
+                address = address_text.split(',')[0]
+                state = 'CA'
+                city = 'Roseville'
+                zip = address_text.split(',')[-1].split(' ')[-1]
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    '',
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
+
+                values.append(temp_values)
+                UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
+                                          city=city, state=state, zip=zip, name=name)
+        main(url.description, values)
+
+    return True
+
+
+def url_57(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    time.sleep(5)
+
+    start_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate')
+    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
+
+    end_date = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate')
+    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_lblGSExpand').click()
+    time.sleep(2)
+
+    select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_asiGSForm_NEVCO_ddl_0_0'))
+    select.select_by_value('Residential')
+
+    time.sleep(2)
+
+    select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_asiGSForm_NEVCO_ddl_0_1'))
+    select.select_by_value('Solar Array')
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(5)
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    if records_table:
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-1]
+        values = []
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[1]), '%m/%d/%Y').date()
+            id = var_checker(td[2])
+            status = var_checker(td[6])
+            description = var_checker(td[4])
+            address_text = var_checker(td[5])
+            if date_start <= date <= date_end and td[1].find_elements(By.TAG_NAME,
+                                                                                             'a') and not UrlResults.objects.filter(
+                record_id=id, date=date).first():
+
+                address = address_text.split(',')[0]
+                city_text = address_text.split(',')[-1].split(' ')
+                state = 'CA'
+                zip = city_text[-1]
+                city_text.pop(-1)
+                city_text.pop(-1)
+                city = ' '.join(city_text)
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    '',
                     description,
                     address,
                     city,
@@ -3659,16 +4070,12 @@ def url_51(date_start, date_end, url):
                     '',
                     ''
                 ]
+
                 values.append(temp_values)
-                UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address, city=city,
-                                          state=state, zip=zip, name=name)
+                UrlResults.objects.create(url=url, record_id=id, date=date, status=status, address=address,
+                                          city=city, state=state, zip=zip, description=description)
+        main(url.description, values)
 
-        elif not date:
-            break
-
-        i += 1
-        element_start_count += 1
-    main(url.description, values)
     return True
 
 
