@@ -11,7 +11,7 @@
  Target Server Version : 80030
  File Encoding         : 65001
 
- Date: 21/12/2022 07:10:46
+ Date: 21/12/2022 23:43:55
 */
 
 SET NAMES utf8mb4;
@@ -45,31 +45,19 @@ CREATE TABLE `app_urlresults`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `app_urlresults_url_id_915b1b51_fk_app_urls_id`(`url_id`) USING BTREE,
   CONSTRAINT `app_urlresults_url_id_915b1b51_fk_app_urls_id` FOREIGN KEY (`url_id`) REFERENCES `app_urls` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 7072 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7205 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of app_urlresults
 -- ----------------------------
-INSERT INTO `app_urlresults` VALUES (7072, '2022-12-20 22:24:45.778038', 16, '8350 LAS LAGUNAS LN', 'MOSES GLENN R & RACHEL L *', 'Las Vegas', '12/20/2022', 'To install a 18.48 kW roof mounted PV system. No Derates or MPU\'s. Incorrectly submitted previously under electrical permit BD22-60252', NULL, NULL, NULL, 'Moses PV Project', NULL, 'NV', 'Awaiting Plans', NULL, NULL, '89129', 'BD22-61412', NULL);
-INSERT INTO `app_urlresults` VALUES (7073, '2022-12-20 22:24:49.549324', 16, '7045 SCHIRLLS ST', 'CARRICK-BURTON LORETTA & BURTON SHAWN *', 'Las Vegas', '12/20/2022', '30.4 kw rooftop solar pv system', NULL, NULL, NULL, 'Solar PV / Carrick', NULL, 'NV', 'In Review', NULL, NULL, '89118', 'BD22-61363', NULL);
-INSERT INTO `app_urlresults` VALUES (7074, '2022-12-20 22:24:53.759954', 16, '7562 MYSTIC VOYAGE ST', 'THOMAS HOSEA & EVER RUTH *', 'Las Vegas', '12/20/2022', '10.360KW PV ROOF ADD-ON', NULL, NULL, NULL, '661R-562THOM', NULL, 'NV', 'In Review', NULL, NULL, '89139', 'BD22-61310', NULL);
-INSERT INTO `app_urlresults` VALUES (7075, '2022-12-20 22:24:58.100182', 16, '9140 MOHAWK ST', 'SCHULTZ S W TRUST ETAL & SCHULTZ TIMOTHY J TRS *', 'Las Vegas', '12/20/2022', 'INSTALLATION OF A ROOF MOUNTED 22KW DC WATTS PV SOLAR SYSTEM.', NULL, NULL, NULL, 'WOODHAMS (222455)', NULL, 'NV', 'In Review', NULL, NULL, '89139', 'BD22-61302', NULL);
-INSERT INTO `app_urlresults` VALUES (7076, '2022-12-20 22:25:01.717858', 16, '4470 N CHIEFTAIN ST', 'DO WHAT IT TAKES TRUST *', 'Las Vegas', '12/19/2022', '24.82 kW DC grid-tied, roof-mounted PV system. 68 panels, 68 micro inverters.', NULL, NULL, NULL, 'Birgit Velasquez', NULL, 'NV', 'In Review', NULL, NULL, '89129', 'BD22-61136', NULL);
-INSERT INTO `app_urlresults` VALUES (7077, '2022-12-20 22:25:05.711044', 16, '2155 CAMEL ST', 'LARIOS FABIAN PLAZOLA *', 'Las Vegas', '12/19/2022', 'Residential Rooftop Solar Installation of 15.99 kW DC System', NULL, NULL, NULL, 'Fabian Plazola Solar Project', NULL, 'NV', 'In Review', NULL, NULL, '89115', 'BD22-61110', NULL);
-INSERT INTO `app_urlresults` VALUES (7078, '2022-12-20 22:25:09.255197', 16, '3498 BRAEWOOD DR', 'SIENKIEWICZ MARK *', 'Las Vegas', '12/19/2022', '(1) SolarEdge Inverter LOCATION-OUTSIDE (15) Hanwha Q-Cell 400 Existing Service Size 125amp System Size 6.0 DCkW (1) MPU 225 BUS 200 Main breaker', NULL, NULL, NULL, 'Sienkiewicz, Mark', NULL, 'NV', 'In Review', NULL, NULL, '89121', 'BD22-61088', NULL);
-INSERT INTO `app_urlresults` VALUES (7079, '2022-12-20 22:25:12.998063', 16, '4885 N PIONEER WAY', 'ZUCKER SCOTT D & NATALIE J *', 'Las Vegas', '12/19/2022', 'INSTALLATION OF A ROOF MOUNTED 20.4KW DC WATTS PV SOLAR SYSTEM.', NULL, NULL, NULL, 'ZUCKER (222402)', NULL, 'NV', 'In Review', NULL, NULL, '89149', 'BD22-61005', NULL);
-INSERT INTO `app_urlresults` VALUES (7080, '2022-12-20 22:25:16.973555', 16, '9757 MARCELLINE AVE', 'LADWIG MARK E & MEGHAN CAROLINE *', 'Las Vegas', '12/17/2022', '9.620KW PV ROOF INSTALL WITH ESS', NULL, NULL, NULL, '661R-757LADW', NULL, 'NV', 'In Review', NULL, NULL, '89148', 'BD22-60952', NULL);
-INSERT INTO `app_urlresults` VALUES (7081, '2022-12-20 22:25:20.677073', 16, '7794 PINK GINGER ST', 'VILLASENOR MARLO ALEXANDRIA *', 'Las Vegas', '12/16/2022', '15.17 kw rooftop solar pv', NULL, NULL, NULL, 'Solar PV / Villasenor', NULL, 'NV', 'In Review', NULL, NULL, '89123', 'BD22-60916', NULL);
-INSERT INTO `app_urlresults` VALUES (7082, '2022-12-20 22:26:23.565926', 3, '10304 AUTUMNWOOD DR', NULL, 'H U D S O N', '12/20/2022', 'Installation of a 8.4 kw, grid tied, roof mounted solar pv system.', NULL, '', NULL, 'Capriotti Residence', NULL, 'FL', 'Awaiting Plans', NULL, NULL, '34667', 'RESENERGY-2022-002720', 'CAPRIOTTI LOUIS & *');
-INSERT INTO `app_urlresults` VALUES (7083, '2022-12-20 22:26:31.596748', 3, '30356 TRISTANIA CT', NULL, 'W E S L E Y   C H A P E L', '12/20/2022', 'Mount Solar Pool Panels flat to roof pitch / NO ELECTRIC', NULL, '', NULL, 'Miller Pool Solar', NULL, 'FL', 'Awaiting Plans', NULL, NULL, '33543', 'RESENERGY-2022-002719', 'MILLER DAVID SMITH II & AMY KERSTIN *');
-INSERT INTO `app_urlresults` VALUES (7084, '2022-12-20 22:26:41.592079', 3, '36018 ASTER AVE', NULL, 'Z E P H Y R H I L L S', '12/20/2022', 'Install 8.58kW Solar PV Roof System', NULL, '', NULL, 'Stefancich Install', NULL, 'FL', 'Plan Review In Process', NULL, NULL, '33541', 'RESENERGY-2022-002718', 'STEFANCICH PATRICIA A *');
-INSERT INTO `app_urlresults` VALUES (7085, '2022-12-20 22:26:49.569629', 3, '3355 TOUR TRCE', NULL, 'L A N D   O   L A K E S', '12/20/2022', 'INSTALLATION OF ROOF MOUNTED PHOTO VOLTAIC SYSTEM AND (2) TESLA POWERWALLS', NULL, '', NULL, 'KINSOLVING 3461197', NULL, 'FL', 'Plans Received', NULL, NULL, '34638', 'RESENERGY-2022-002717', 'KINSOLVING CHRISTOPHER & ANGEL *');
-INSERT INTO `app_urlresults` VALUES (7086, '2022-12-20 22:26:59.467866', 3, '8625 ZANE LN', NULL, 'P O R T   R I C H E Y', '12/20/2022', 'ROOF MOUNTED SOLAR PV SYSTEM INSTALLATION (11.47 KW)', NULL, '', NULL, 'LOURENCO MARIE', NULL, 'FL', 'Plan Review In Process', NULL, NULL, '34668', 'RESENERGY-2022-002715', 'LOURENCO MARIE *');
-INSERT INTO `app_urlresults` VALUES (7087, '2022-12-20 22:27:08.531231', 3, '2245 EDELWEISS LOOP', NULL, 'T R I N I T Y', '12/20/2022', 'Remove and reinstall panels for roof replacement', NULL, '', NULL, 'Geiger Solar', NULL, 'FL', 'File Validation Issues', NULL, NULL, '34655', 'RESENERGY-2022-002714', 'GEIGER SUSAN J TRUST *');
-INSERT INTO `app_urlresults` VALUES (7088, '2022-12-20 22:27:17.992773', 3, '8264 OLYMPIC STONE CIR', NULL, 'N E W   P O R T   R I C H E Y', '12/20/2022', 'INSTALLATION OF ROOF MOUNTED PHOTO VOLTAIC SYSTEM', NULL, '', NULL, 'BURUGU 3461257', NULL, 'FL', 'Plans Received', NULL, NULL, '34655', 'RESENERGY-2022-002713', 'BURUGU BHASKAR REDDY & ROOPA RANI *');
-INSERT INTO `app_urlresults` VALUES (7089, '2022-12-20 22:27:25.973420', 3, '3715 DUKE FIRTH ST', NULL, 'L A N D   O   L A K E S', '12/20/2022', 'REMOVAL AND RE-INSTALLATION OF ROOF MOUNTED PHOTO VOLTAIC SYSTEM', NULL, '', NULL, 'VACHARASIN R&R', NULL, 'FL', 'Plan Review In Process', NULL, NULL, '34638', 'RESENERGY-2022-002712', 'VACHARASIN JOE & MARY *');
-INSERT INTO `app_urlresults` VALUES (7090, '2022-12-20 22:27:34.746588', 3, '13024 BURNS DR', NULL, 'O D E S S A', '12/20/2022', 'Install a 22KW Generator with a 200Amp Transfer Switch.', NULL, '', NULL, 'Tscung/Dragonfly', NULL, 'FL', 'Permit Issued', NULL, NULL, '33556', 'RESENERGY-2022-002711', 'TSUNG DENNIS HSU LIANG & OLIVEIRA LADY JACKELINE DE *');
-INSERT INTO `app_urlresults` VALUES (7091, '2022-12-20 22:27:42.355011', 3, '3706 BLAYTON ST', NULL, 'N E W   P O R T   R I C H E Y', '12/20/2022', 'Install 9.36kW Solar PV Roof System', NULL, '', NULL, 'Mccaffrey Install', NULL, 'FL', 'Plan Review In Process', NULL, NULL, '34652', 'RESENERGY-2022-002710', 'MCCAFFREY FORREST JR & MILDRED *');
+INSERT INTO `app_urlresults` VALUES (7197, '2022-12-21 15:34:00.781140', 61, '25408 BARBARA AV', NULL, 'ARVIN', '12/20/2022', NULL, NULL, NULL, NULL, 'SUNRUN SOLAR', NULL, 'CA', 'Applied', NULL, NULL, '93203', 'K202211301', 'MARROQUIN FRANCISCO J & ROSA H');
+INSERT INTO `app_urlresults` VALUES (7198, '2022-12-21 15:34:05.839060', 61, '1 CORPORATE DR STE 360', NULL, 'LAKE ZURICH', '12/20/2022', NULL, NULL, NULL, NULL, 'SUNRUN SOLAR', NULL, 'IL', 'Applied', NULL, NULL, '60047', 'K202211299', 'RESIDENTIAL BANCORP');
+INSERT INTO `app_urlresults` VALUES (7199, '2022-12-21 15:34:10.455569', 61, '416 BUCHANAN ST', NULL, 'TAFT', '12/20/2022', NULL, NULL, NULL, NULL, 'SUNRUN SOLAR', NULL, 'CA', 'Applied', NULL, NULL, '93268', 'K202211297', 'CORDERO CASIANO AGUSTIN & OFELIA');
+INSERT INTO `app_urlresults` VALUES (7200, '2022-12-21 15:34:15.500804', 61, '24180 MARTINGALE WY', NULL, 'TEHACHAPI', '12/20/2022', NULL, NULL, NULL, NULL, 'LUMIO', NULL, 'CA', 'Issued', NULL, NULL, '93561', 'K202211295', 'UNDERWOOD DONALD L & KATHRYN A LIVING TRUST');
+INSERT INTO `app_urlresults` VALUES (7201, '2022-12-21 15:34:20.698556', 61, '615 IRENE ST', NULL, 'BAKERSFIELD', '12/20/2022', NULL, NULL, NULL, NULL, 'GO INFINITY ENERGY', NULL, 'CA', 'Issued', NULL, NULL, '93305', 'K202211291', 'RIVERA LIBRADO JR');
+INSERT INTO `app_urlresults` VALUES (7202, '2022-12-21 15:34:25.505292', 61, '6507 JETTA AV', NULL, 'BAKERSFIELD', '12/20/2022', NULL, NULL, NULL, NULL, 'INFINITY ENERGY', NULL, 'CA', 'Issued', NULL, NULL, '93308', 'K202211290', 'FAIN KRISTINA KAY');
+INSERT INTO `app_urlresults` VALUES (7203, '2022-12-21 15:34:30.203041', 61, '2332 PICTORIA DR', NULL, 'BAKERSFIELD', '12/20/2022', NULL, NULL, NULL, NULL, 'GO INFINITY ENERGY', NULL, 'CA', 'Issued', NULL, NULL, '93306', 'K202211289', 'RAGLAND ALAN SCOTT');
+INSERT INTO `app_urlresults` VALUES (7204, '2022-12-21 15:34:34.782553', 61, '1009 JEFFERSON ST', NULL, 'BAKERSFIELD', '12/20/2022', NULL, NULL, NULL, NULL, 'SUNRUN SOLAR', NULL, 'CA', 'Applied', NULL, NULL, '93305', 'K202211278', 'GUTIERREZ CARMEN P');
 
 -- ----------------------------
 -- Table structure for app_urls
@@ -82,7 +70,7 @@ CREATE TABLE `app_urls`  (
   `date_created` datetime(6) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 52 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 58 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of app_urls
@@ -137,13 +125,17 @@ INSERT INTO `app_urls` VALUES (47, 'https://aca-prod.accela.com/HCFL/Cap/GlobalS
 INSERT INTO `app_urls` VALUES (48, 'https://epermit.myclearwater.com/CitizenAccess/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Clearwater FL (2)', '2022-12-17 22:14:04.000000', 1);
 INSERT INTO `app_urls` VALUES (49, 'https://aca-prod.accela.com/WESTON/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Weston FL', '2022-12-17 22:21:48.000000', 1);
 INSERT INTO `app_urls` VALUES (50, 'https://aca-prod.accela.com/PHARR/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Pharr TX', '2022-12-17 22:28:31.000000', 1);
-INSERT INTO `app_urls` VALUES (51, 'https://epicla.lacounty.gov/energov_prod/SelfService/#/search?m=1&fm=2&ps=300&pn=1&em=true&st=solar', 'Los Angeles County', '2022-12-20 16:54:45.000000', 1);
+INSERT INTO `app_urls` VALUES (51, 'https://epicla.lacounty.gov/energov_prod/SelfService/#/search?m=1&fm=2&ps=100&pn=1&em=true&st=solar', 'Los Angeles County', '2022-12-20 16:54:45.000000', 1);
 INSERT INTO `app_urls` VALUES (52, 'https://aca-prod.accela.com/CONCORD/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Concord CA', '2022-12-20 20:37:01.000000', 1);
 INSERT INTO `app_urls` VALUES (53, 'https://citizen.srcity.org/CitizenAccess/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Santa Rosa CA', '2022-12-20 21:00:08.000000', 1);
 INSERT INTO `app_urls` VALUES (54, 'https://aca-prod.accela.com/PIMA/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Pima County AZ', '2022-12-20 21:07:53.000000', 1);
 INSERT INTO `app_urls` VALUES (55, 'https://aca-prod.accela.com/LAKECO/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Lake County CA', '2022-12-20 21:36:57.000000', 1);
 INSERT INTO `app_urls` VALUES (56, 'https://permitsonline.roseville.ca.us/OPS/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Roseville CA', '2022-12-20 21:56:10.000000', 1);
 INSERT INTO `app_urls` VALUES (57, 'https://permits.mynevadacounty.com/CitizenAccess/Cap/CapHome.aspx?module=Building', 'Nevada County CA', '2022-12-20 22:24:20.000000', 0);
+INSERT INTO `app_urls` VALUES (58, 'https://deltonafl-energovweb.tylerhost.net/apps/SelfService#/search?m=1&fm=2&ps=100&pn=1&em=true&st=solar', 'Deltona FL', '2022-12-21 21:14:17.000000', 1);
+INSERT INTO `app_urls` VALUES (59, 'https://energovweb.sugarlandtx.gov/EnerGov_prod/SelfService#/search?m=1&fm=2&ps=100&pn=1&em=true&st=solar', 'Sugarland TX', '2022-12-21 21:41:18.000000', 1);
+INSERT INTO `app_urls` VALUES (60, 'https://aca-prod.accela.com/CVB/Cap/GlobalSearchResults.aspx?QueryText=solar#', 'VA BEACH GENERAL', '2022-12-21 21:59:34.000000', 1);
+INSERT INTO `app_urls` VALUES (61, 'https://accela.co.kern.ca.us/CitizenAccess/Cap/CapHome.aspx?module=Building&TabName=Home', 'Kern County CA', '2022-12-21 23:08:38.000000', 1);
 
 -- ----------------------------
 -- Table structure for auth_group
@@ -154,7 +146,7 @@ CREATE TABLE `auth_group`  (
   `name` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `name`(`name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_group
@@ -173,7 +165,7 @@ CREATE TABLE `auth_group_permissions`  (
   INDEX `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm`(`permission_id`) USING BTREE,
   CONSTRAINT `auth_group_permissio_permission_id_84c5c92e_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `auth_group_permissions_group_id_b120cbf9_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_group_permissions
@@ -191,7 +183,7 @@ CREATE TABLE `auth_permission`  (
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `auth_permission_content_type_id_codename_01ab375a_uniq`(`content_type_id`, `codename`) USING BTREE,
   CONSTRAINT `auth_permission_content_type_id_2f476e4b_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_permission
@@ -247,7 +239,7 @@ CREATE TABLE `auth_user`  (
   `date_joined` datetime(6) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_user
@@ -266,7 +258,7 @@ CREATE TABLE `auth_user_groups`  (
   INDEX `auth_user_groups_group_id_97559544_fk_auth_group_id`(`group_id`) USING BTREE,
   CONSTRAINT `auth_user_groups_group_id_97559544_fk_auth_group_id` FOREIGN KEY (`group_id`) REFERENCES `auth_group` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `auth_user_groups_user_id_6a12ed8b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_user_groups
@@ -285,7 +277,7 @@ CREATE TABLE `auth_user_user_permissions`  (
   INDEX `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm`(`permission_id`) USING BTREE,
   CONSTRAINT `auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm` FOREIGN KEY (`permission_id`) REFERENCES `auth_permission` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of auth_user_user_permissions
@@ -309,7 +301,7 @@ CREATE TABLE `django_admin_log`  (
   INDEX `django_admin_log_user_id_c564eba6_fk_auth_user_id`(`user_id`) USING BTREE,
   CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of django_admin_log
@@ -325,7 +317,7 @@ CREATE TABLE `django_content_type`  (
   `model` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `django_content_type_app_label_model_76bd3d3b_uniq`(`app_label`, `model`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of django_content_type
