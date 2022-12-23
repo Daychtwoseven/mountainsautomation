@@ -11,7 +11,7 @@
  Target Server Version : 80030
  File Encoding         : 65001
 
- Date: 23/12/2022 16:09:32
+ Date: 24/12/2022 00:00:18
 */
 
 SET NAMES utf8mb4;
@@ -42,6 +42,7 @@ CREATE TABLE `app_urlresults`  (
   `zip` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   `record_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL,
   `owner` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
+  `contractor` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `app_urlresults_url_id_915b1b51_fk_app_urls_id`(`url_id`) USING BTREE,
   CONSTRAINT `app_urlresults_url_id_915b1b51_fk_app_urls_id` FOREIGN KEY (`url_id`) REFERENCES `app_urls` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
@@ -50,6 +51,46 @@ CREATE TABLE `app_urlresults`  (
 -- ----------------------------
 -- Records of app_urlresults
 -- ----------------------------
+INSERT INTO `app_urlresults` VALUES (7318, '2022-12-23 15:57:29.897056', 68, '4494 PHILADELPHIA CIR', NULL, 'KISSIMMEE', '2022-12-21', 'Electrical work for solar permit MSR-22-0900', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34746', 'ER-22-0907', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7319, '2022-12-23 15:57:29.979829', 68, '1324 MANOR DR', NULL, 'KISSIMMEE', '2022-12-20', 'installation of solar PV modules on roof of residence', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'ER-22-0876', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7320, '2022-12-23 15:57:30.075340', 68, '2212 SMITH ST', NULL, 'KISSIMMEE', '2022-12-20', '7.60 kW PV solar panel installation roof-mounted', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34744', 'ER-22-0685', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7321, '2022-12-23 15:57:30.148855', 68, '2361 OAK LEAF LN', NULL, 'KISSIMMEE', '2022-12-19', 'Installation of roof-mounted solar system; 32 panels; 11.52 kw DC & 7.6 kw AC.', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34744', 'ER-22-0837', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7322, '2022-12-23 15:57:30.225856', 68, '2936 CHANTILLY AVE', NULL, 'KISSIMMEE', '2022-12-19', 'Install 8.40KW rooftop solar system', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'MSR-22-1026', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7323, '2022-12-23 15:57:30.302370', 68, '2128 JESSA DR', NULL, 'KISSIMMEE', '2022-12-19', '11880 KW roof mounted PV solar system', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34743', 'MSR-22-0963', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7324, '2022-12-23 15:57:30.380882', 68, '2281 TOURNAMENT CT', NULL, 'KISSIMMEE', '2022-12-18', 'Solar pv rooftop and interconnection system', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34746', 'MSR-22-0993', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7325, '2022-12-23 15:57:30.473399', 68, '2721 JANET ST', NULL, 'KISSIMMEE', '2022-12-18', 'PV Solar Installation, Roof mount, 13 modules, 4.75kw, KUA', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'ER-22-0821', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7326, '2022-12-23 15:57:30.551915', 68, '2440 CARAVELLE CIR', NULL, 'KISSIMMEE', '2022-12-18', 'Solar PV Roof Installation', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34746', 'MSR-22-1007', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7327, '2022-12-23 15:57:30.630432', 68, '2440 CARAVELLE CIR', NULL, 'KISSIMMEE', '2022-12-18', 'Solar PV Roof Installation', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34746', 'ER-22-0816', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7328, '2022-12-23 15:57:30.709940', 68, '1902 ONYX CT', NULL, 'KISSIMMEE', '2022-12-18', 'PV Solar Installation, Roof Mount, 32 Modules, 11.68kw, KUA, MAIN PANEL UPGRADE with new 150A Main Distribution', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34743', 'MSR-22-1002', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7329, '2022-12-23 15:57:30.790454', 68, '3248 HAWKS NEST DR', NULL, 'KISSIMMEE', '2022-12-14', 'Installation of roof-mounted photo-voltaic system.', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'MSR-22-0997', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7330, '2022-12-23 15:57:30.870965', 68, '853 LONG BAY CT', NULL, 'KISSIMMEE', '2022-12-14', 'sub permit for solar PV', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'ER-22-0929', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7331, '2022-12-23 15:57:30.962479', 68, '3203 WHOOPING CRANE RUN', NULL, 'KISSIMMEE', '2022-12-13', 'ROOF MOUNTED SOLAR PV SYSTEM INSTALLATION (11.47 KW)', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'MSR-22-0982', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7332, '2022-12-23 15:57:31.043987', 68, '4507 DECLARATION DR', NULL, 'KISSIMMEE', '2022-12-13', 'Installation of roof mounted pv solar system', NULL, NULL, NULL, NULL, NULL, 'FL', 'Pending Permit Issuance', NULL, NULL, '34746', 'MSR-22-0960', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7333, '2022-12-23 15:57:31.123994', 68, '2212 SMITH ST', NULL, 'KISSIMMEE', '2022-12-09', '7.60 kW PV solar panel installation roof-mounted', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34744', 'MSR-22-0872', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7334, '2022-12-23 15:57:31.203504', 68, '627 EAGLE POINTE SOUTH', NULL, 'KISSIMMEE', '2022-12-08', 'ELECTRICAL WORK FOR SOLAR', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34746', 'ER-22-0768', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7335, '2022-12-23 15:57:31.286021', 68, '2244 STONEHEDGE LOOP', NULL, 'KISSIMMEE', '2022-12-07', 'Installation of ( 22 )PV roof-mounted solar panels', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34743', 'MSR-22-0947', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7336, '2022-12-23 15:57:31.370528', 68, '2244 STONEHEDGE LOOP', NULL, 'KISSIMMEE', '2022-12-07', 'Installation of (22 )PV roof-mounted solar panels', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34743', 'ER-22-0762', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7337, '2022-12-23 15:57:31.455041', 68, '1551 KEY CT', NULL, 'KISSIMMEE', '2022-12-07', 'Pv Solar Installation, Roof Mount, 25 Modules, 9.13kw, KUA', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34744', 'ER-22-0823', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7338, '2022-12-23 15:57:31.539046', 68, '2964 BOATING BLVD', NULL, 'KISSIMMEE', '2022-12-07', 'roof mount installation of photovoltaic solar system', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34746', 'MSR-22-0734', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7339, '2022-12-23 15:57:31.625068', 68, '627 EAGLE POINTE SOUTH', NULL, 'KISSIMMEE', '2022-12-07', 'ROOF MOUNTED SOLAR SYSTEM.', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34746', 'MSR-22-0961', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7340, '2022-12-23 15:57:31.719587', 68, '1820 HUGHEY ST', NULL, 'KISSIMMEE', '2022-12-07', 'INSTALLATION OF A GRID-TIED ROOF-MOUNTED PHOTOVOLTAIC SYSTEM WITH A MAIN SERVICE PANNEL UPGRADE', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'MSR-22-0915', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7341, '2022-12-23 15:57:31.807101', 68, '1551 KEY CT', NULL, 'KISSIMMEE', '2022-12-07', 'PV Solar Installation, Roof Mount, 25 modules, 9.13kw, KUA', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34744', 'MSR-22-0945', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7342, '2022-12-23 15:57:31.893611', 68, '1027 GOLFSIDE CT', NULL, 'KISSIMMEE', '2022-12-06', 'Install 11.55 KW rooftop solar system', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'MSR-22-1027', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7343, '2022-12-23 15:57:31.979123', 68, '1105 OCEAN ST', NULL, 'KISSIMMEE', '2022-12-06', 'Roof Top Solar Panel Install 10.53 kw', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34744', 'ER-22-0846', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7344, '2022-12-23 15:57:32.065639', 68, '618 HACIENDA CIR', NULL, 'KISSIMMEE', '2022-12-06', 'Roof Top Solar Panel Installation. 12.15kw', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'ER-22-0844', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7345, '2022-12-23 15:57:32.152154', 68, '2249 CENTERRA LOOP', NULL, 'KISSIMMEE', '2022-12-06', 'Install 29 PV solar panels on existing roof with all necessary wiring.', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'ER-22-0882', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7346, '2022-12-23 15:57:32.238157', 68, '2609 MILL RUN BLVD', NULL, 'KISSIMMEE', '2022-12-06', 'Roof Top Solar Panel Install 14.985 kW', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34744', 'ER-22-0848', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7347, '2022-12-23 15:57:32.325669', 68, '32 S LAVON AVE', NULL, 'KISSIMMEE', '2022-12-06', 'Roof Top Solar Panel Install', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'ER-22-0862', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7348, '2022-12-23 15:57:32.412184', 68, '32 S LAVON AVE', NULL, 'KISSIMMEE', '2022-12-06', 'Roof Top Solar Panel Install 10.53kw 26 panels and micro inverters', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'MSR-22-0967', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7349, '2022-12-23 15:57:32.499697', 68, '1717 EMMETT ST', NULL, 'KISSIMMEE', '2022-12-06', 'PV system on roof and inverters attached to electric service panel', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'MSR-22-0971', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7350, '2022-12-23 15:57:32.591209', 68, '2507 CORAL AVE', NULL, 'KISSIMMEE', '2022-12-06', 'Roof Top Solar Panel Install 9.60 kW 24 panels and microinverters', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'ER-22-0847', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7351, '2022-12-23 15:57:32.679244', 68, '4494 PHILADELPHIA CIR', NULL, 'KISSIMMEE', '2022-12-02', 'Install a 11.6 kw photovoltaic system on roof', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34746', 'MSR-22-0900', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7352, '2022-12-23 15:57:32.766758', 68, '3511 DOVETAIL AVE', NULL, 'KISSIMMEE', '2022-12-01', 'Rooftop Solar 8.80KW DC/5.90KW AC 20XAPtOS Solar DNA-120-MF-440W with 20XEnphase IQ&-72-2-US', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'MSR-22-0804', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7353, '2022-12-23 15:57:32.859276', 68, '805 PORTAGE ST', NULL, 'KISSIMMEE', '2022-12-01', '10.8 KW PV SOLAR PANELS INSTALLATION ROOF MOUNTED', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'ER-22-0867', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7354, '2022-12-23 15:57:32.963788', 68, '2457 MILL RUN BLVD', NULL, 'KISSIMMEE', '2022-12-01', 'Install roof mounted PV solar system', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34744', 'ER-22-0815', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7355, '2022-12-23 15:57:33.052301', 68, '2609 LIZ LN', NULL, 'KISSIMMEE', '2022-12-01', 'Install roof mounted PV solar system', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34744', 'ER-22-0811', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7356, '2022-12-23 15:57:33.141306', 68, '2420 SHELBY CIR', NULL, 'KISSIMMEE', '2022-12-01', 'Install roof mounted PV solar system', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34743', 'ER-22-0798', NULL, NULL);
+INSERT INTO `app_urlresults` VALUES (7357, '2022-12-23 15:57:33.229820', 68, '853 LONG BAY CT', NULL, 'KISSIMMEE', '2022-12-01', 'Install a new roof-mounted photovoltaic solar electric system', NULL, NULL, NULL, NULL, NULL, 'FL', 'Issued', NULL, NULL, '34741', 'MSR-22-1009', NULL, NULL);
 
 -- ----------------------------
 -- Table structure for app_urls
@@ -132,6 +173,9 @@ INSERT INTO `app_urls` VALUES (62, 'https://aca-prod.accela.com/SHELBYCO/Cap/Glo
 INSERT INTO `app_urls` VALUES (63, 'https://stluciecountyfl-energovpub.tylerhost.net/Apps/SelfService#/search?m=1&fm=2&ps=100&pn=1&em=true&st=solar', 'Port st lucie FL', '2022-12-23 13:32:06.000000', 1);
 INSERT INTO `app_urls` VALUES (64, 'https://aca.longmontcolorado.gov/CitizenAccess/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Longmont CO', '2022-12-23 14:34:25.000000', 1);
 INSERT INTO `app_urls` VALUES (65, 'https://aca.longmontcolorado.gov/CitizenAccess/Cap/CapHome.aspx?module=Building&TabName=Building&TabList=Home%7C0%7CBuilding%7C1%7CEnforcement%7C2%7CLicenses%7C3%7CPlanning%7C4%7CPublicWorks%7C5%7CCurrentTabIndex%7C1', 'Longmont CO (2)', '2022-12-23 15:28:02.000000', 1);
+INSERT INTO `app_urls` VALUES (66, 'https://cvportal.provo.org/CityViewPortal/Permit/Locator', 'Provo UT', '2022-12-23 22:00:57.000000', 1);
+INSERT INTO `app_urls` VALUES (67, 'https://portal.iworq.net/LEHI/permits/602?search=solar&field=text5', 'Lehi UT', '2022-12-23 23:34:26.000000', 1);
+INSERT INTO `app_urls` VALUES (68, 'https://energovweb.kissimmee.gov/EnerGov_Prod/SelfService#/search?m=1&fm=2&ps=100&pn=1&em=true&st=solar', 'Kissimmee FL ', '2022-12-23 23:53:32.000000', 1);
 
 -- ----------------------------
 -- Table structure for auth_group
@@ -370,6 +414,7 @@ INSERT INTO `django_migrations` VALUES (25, 'auth', '0010_alter_group_name_max_l
 INSERT INTO `django_migrations` VALUES (26, 'auth', '0011_update_proxy_permissions', '2022-12-15 08:30:26.281214');
 INSERT INTO `django_migrations` VALUES (27, 'auth', '0012_alter_user_first_name_max_length', '2022-12-15 08:30:26.313271');
 INSERT INTO `django_migrations` VALUES (28, 'sessions', '0001_initial', '2022-12-15 08:30:26.333303');
+INSERT INTO `django_migrations` VALUES (29, 'app', '0011_urlresults_contractor', '2022-12-23 15:17:05.232538');
 
 -- ----------------------------
 -- Table structure for django_session

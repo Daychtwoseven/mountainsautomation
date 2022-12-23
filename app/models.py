@@ -24,6 +24,7 @@ class UrlResults(models.Model):
     zip = models.TextField(null=True, blank=True)
     applicant = models.TextField(null=True, blank=True)
     owner = models.TextField(null=True, blank=True)
+    contractor = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     job_value = models.TextField(null=True, blank=True)
     kw = models.TextField(null=True, blank=True)
