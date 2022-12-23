@@ -11,7 +11,7 @@
  Target Server Version : 80030
  File Encoding         : 65001
 
- Date: 21/12/2022 23:43:55
+ Date: 23/12/2022 16:09:32
 */
 
 SET NAMES utf8mb4;
@@ -45,19 +45,11 @@ CREATE TABLE `app_urlresults`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `app_urlresults_url_id_915b1b51_fk_app_urls_id`(`url_id`) USING BTREE,
   CONSTRAINT `app_urlresults_url_id_915b1b51_fk_app_urls_id` FOREIGN KEY (`url_id`) REFERENCES `app_urls` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 7205 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7204 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of app_urlresults
 -- ----------------------------
-INSERT INTO `app_urlresults` VALUES (7197, '2022-12-21 15:34:00.781140', 61, '25408 BARBARA AV', NULL, 'ARVIN', '12/20/2022', NULL, NULL, NULL, NULL, 'SUNRUN SOLAR', NULL, 'CA', 'Applied', NULL, NULL, '93203', 'K202211301', 'MARROQUIN FRANCISCO J & ROSA H');
-INSERT INTO `app_urlresults` VALUES (7198, '2022-12-21 15:34:05.839060', 61, '1 CORPORATE DR STE 360', NULL, 'LAKE ZURICH', '12/20/2022', NULL, NULL, NULL, NULL, 'SUNRUN SOLAR', NULL, 'IL', 'Applied', NULL, NULL, '60047', 'K202211299', 'RESIDENTIAL BANCORP');
-INSERT INTO `app_urlresults` VALUES (7199, '2022-12-21 15:34:10.455569', 61, '416 BUCHANAN ST', NULL, 'TAFT', '12/20/2022', NULL, NULL, NULL, NULL, 'SUNRUN SOLAR', NULL, 'CA', 'Applied', NULL, NULL, '93268', 'K202211297', 'CORDERO CASIANO AGUSTIN & OFELIA');
-INSERT INTO `app_urlresults` VALUES (7200, '2022-12-21 15:34:15.500804', 61, '24180 MARTINGALE WY', NULL, 'TEHACHAPI', '12/20/2022', NULL, NULL, NULL, NULL, 'LUMIO', NULL, 'CA', 'Issued', NULL, NULL, '93561', 'K202211295', 'UNDERWOOD DONALD L & KATHRYN A LIVING TRUST');
-INSERT INTO `app_urlresults` VALUES (7201, '2022-12-21 15:34:20.698556', 61, '615 IRENE ST', NULL, 'BAKERSFIELD', '12/20/2022', NULL, NULL, NULL, NULL, 'GO INFINITY ENERGY', NULL, 'CA', 'Issued', NULL, NULL, '93305', 'K202211291', 'RIVERA LIBRADO JR');
-INSERT INTO `app_urlresults` VALUES (7202, '2022-12-21 15:34:25.505292', 61, '6507 JETTA AV', NULL, 'BAKERSFIELD', '12/20/2022', NULL, NULL, NULL, NULL, 'INFINITY ENERGY', NULL, 'CA', 'Issued', NULL, NULL, '93308', 'K202211290', 'FAIN KRISTINA KAY');
-INSERT INTO `app_urlresults` VALUES (7203, '2022-12-21 15:34:30.203041', 61, '2332 PICTORIA DR', NULL, 'BAKERSFIELD', '12/20/2022', NULL, NULL, NULL, NULL, 'GO INFINITY ENERGY', NULL, 'CA', 'Issued', NULL, NULL, '93306', 'K202211289', 'RAGLAND ALAN SCOTT');
-INSERT INTO `app_urlresults` VALUES (7204, '2022-12-21 15:34:34.782553', 61, '1009 JEFFERSON ST', NULL, 'BAKERSFIELD', '12/20/2022', NULL, NULL, NULL, NULL, 'SUNRUN SOLAR', NULL, 'CA', 'Applied', NULL, NULL, '93305', 'K202211278', 'GUTIERREZ CARMEN P');
 
 -- ----------------------------
 -- Table structure for app_urls
@@ -70,7 +62,7 @@ CREATE TABLE `app_urls`  (
   `date_created` datetime(6) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 58 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 61 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of app_urls
@@ -136,6 +128,10 @@ INSERT INTO `app_urls` VALUES (58, 'https://deltonafl-energovweb.tylerhost.net/a
 INSERT INTO `app_urls` VALUES (59, 'https://energovweb.sugarlandtx.gov/EnerGov_prod/SelfService#/search?m=1&fm=2&ps=100&pn=1&em=true&st=solar', 'Sugarland TX', '2022-12-21 21:41:18.000000', 1);
 INSERT INTO `app_urls` VALUES (60, 'https://aca-prod.accela.com/CVB/Cap/GlobalSearchResults.aspx?QueryText=solar#', 'VA BEACH GENERAL', '2022-12-21 21:59:34.000000', 1);
 INSERT INTO `app_urls` VALUES (61, 'https://accela.co.kern.ca.us/CitizenAccess/Cap/CapHome.aspx?module=Building&TabName=Home', 'Kern County CA', '2022-12-21 23:08:38.000000', 1);
+INSERT INTO `app_urls` VALUES (62, 'https://aca-prod.accela.com/SHELBYCO/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Memphis TN', '2022-12-23 12:42:34.000000', 1);
+INSERT INTO `app_urls` VALUES (63, 'https://stluciecountyfl-energovpub.tylerhost.net/Apps/SelfService#/search?m=1&fm=2&ps=100&pn=1&em=true&st=solar', 'Port st lucie FL', '2022-12-23 13:32:06.000000', 1);
+INSERT INTO `app_urls` VALUES (64, 'https://aca.longmontcolorado.gov/CitizenAccess/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Longmont CO', '2022-12-23 14:34:25.000000', 1);
+INSERT INTO `app_urls` VALUES (65, 'https://aca.longmontcolorado.gov/CitizenAccess/Cap/CapHome.aspx?module=Building&TabName=Building&TabList=Home%7C0%7CBuilding%7C1%7CEnforcement%7C2%7CLicenses%7C3%7CPlanning%7C4%7CPublicWorks%7C5%7CCurrentTabIndex%7C1', 'Longmont CO (2)', '2022-12-23 15:28:02.000000', 1);
 
 -- ----------------------------
 -- Table structure for auth_group
