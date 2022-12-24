@@ -4824,7 +4824,6 @@ def url_67(date_start, date_end, url):
             if date_start <= date <= date_end and id and not UrlResults.objects.filter(record_id=id, date=date).first():
                 records_tr[i].find_element(By.XPATH, f'/html/body/div[1]/main/div[2]/div/div/div['
                                                      f'1]/table/tbody/tr[{i}]/th/a').click()
-                wait = WebDriverWait(driver, 10)
                 wait.until(
                     EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/main/div[2]/div/div/h2')))
 
@@ -4936,6 +4935,63 @@ def url_68(date_start, date_end, url):
 
     main(url.description, values)
     return True
+
+
+def url_69(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+
+    records_table = driver.find_element(By.ID, 'cphBody_gvSearch')
+    if records_table:
+        values = []
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
+        for i in range(1, len(records_tr)):
+            records_table = driver.find_element(By.ID, 'cphBody_gvSearch')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date_str = var_checker(td[3])[0:10].strftime("%m/%d/%Y")
+            print(date_str)
+            date = datetime.strptime(date_str, '%m/%d/%Y').date()
+            id = var_checker(td[0])
+            contractor = var_checker(td[4])
+            print(id)
+            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
+                href = f"http://webapp.sjcfl.us/Applications/WATSWebX/Permit/BLPermit.aspx?PermitNo={id}&PopUp=1"
+                soup = beautifulsoup(href)
+                address = soup.find(id='cphBody_txtPrjAddr')['value']
+                state = 'FL'
+                city = soup.find(id='cphBody_txtPrjCity')['value']
+                zip = soup.find(id='cphBody_txtPrjZip')['value'][0:5]
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    '',
+                    '',
+                    '',
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    contractor
+                ]
+                print(temp_values)
+                values.append(temp_values)
+                UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                          state=state, zip=zip, contractor=contractor)
+
+        print(values)
+        main(url.description, values)
+    return
 
 
 def chrome_driver():

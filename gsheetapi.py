@@ -33,7 +33,7 @@ def main(city, values):
                 'values': values
             }
             print(f"{city}")
-            request = sheet.values().append(spreadsheetId=SAMPLE_SPREADSHEET_ID, range="A2:R2",
+            request = sheet.values().append(spreadsheetId=SAMPLE_SPREADSHEET_ID, range="A2:S2",
                                             valueInputOption="USER_ENTERED", body=body).execute()
 
     except HttpError as err:
