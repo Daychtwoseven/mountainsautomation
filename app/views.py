@@ -4951,12 +4951,16 @@ def url_69(date_start, date_end, url):
             records_table = driver.find_element(By.ID, 'cphBody_gvSearch')
             records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')
             td = records_tr[i].find_elements(By.TAG_NAME, 'td')
-            date_str = var_checker(td[3])[0:10].strftime("%m/%d/%Y")
-            print(date_str)
-            date = datetime.strptime(date_str, '%m/%d/%Y').date()
+            date = var_checker(td[3])[0:10].split('/')
+            if len(date[0]) == 1:
+                new_day = f"{0}{date[0]}"
+                date[0] = new_day
+            if len(date[1]) == 1:
+                new_day = f"{0}{date[1]}"
+                date[1] = new_day
+            date = datetime.strptime('/'.join(date)[0:10], '%m/%d/%Y').date()
             id = var_checker(td[0])
             contractor = var_checker(td[4])
-            print(id)
             if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
                 href = f"http://webapp.sjcfl.us/Applications/WATSWebX/Permit/BLPermit.aspx?PermitNo={id}&PopUp=1"
                 soup = beautifulsoup(href)
@@ -4981,15 +4985,137 @@ def url_69(date_start, date_end, url):
                     '',
                     '',
                     '',
-                    '',
                     contractor
                 ]
-                print(temp_values)
                 values.append(temp_values)
                 UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
                                           state=state, zip=zip, contractor=contractor)
 
-        print(values)
+        main(url.description, values)
+    return
+
+
+def url_70(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    wait = WebDriverWait(driver, 10)
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if records_table:
+        values = []
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[6])
+            name = var_checker(td[5])
+            if td[1].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id).first():
+                wait = WebDriverWait(driver, 10)
+                td[1].find_element(By.TAG_NAME, 'a').click()
+                wait.until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
+                address = driver.find_elements(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div[ '
+                                                         '3]/div[5]/div[1]/div[3]/div['
+                                                         '1]/div/div/table/tbody/tr/td/div/span/table/tbody/tr/td['
+                                                         '2]/span[1]')
+                if address:
+                    address = var_checker(address[0])
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+
+                    values.append(temp_values)
+                    UrlResults.objects.create(date=date, url=url, record_id=id, status=status, address=address, name=name)
+            driver.get(url.url)
+            wait.until(
+                EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')))
+        main(url.description, values)
+    return
+
+
+def url_71(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    wait = WebDriverWait(driver, 10)
+
+    records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if records_table:
+        values = []
+        records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[3:-2]
+        for i in range(0, len(records_tr) - 1):
+            records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            records_tr = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[
+                         3:-2]
+            td = records_tr[i].find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(td[0].text, '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[4])
+            if td[1].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id).first():
+                wait = WebDriverWait(driver, 10)
+                td[1].find_element(By.TAG_NAME, 'a').click()
+                wait.until(
+                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
+                address = driver.find_elements(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
+                                                         '3]/div[5]/div[1]/div[3]/div['
+                                                         '1]/div/div/table/tbody/tr/td/div/span/table/tbody/tr/td[2]')
+                description = driver.find_elements(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
+                                                             '3]/div[5]/div[2]/div[3]/div[1]/div['
+                                                             '1]/table/tbody/tr/td[2]/div/span/table/tbody/tr/td[2]')
+                contractor = driver.find_elements(By.XPATH, '/html/body/form/div[3]/div[1]/div[7]/div[2]/div[1]/div['
+                                                            '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr/td['
+                                                            '1]/div/span/table/tbody/tr/td[2]')
+                if address and description and contractor:
+                    address = var_checker(address[0])
+                    description = var_checker(description[0])
+                    contractor_list = var_checker(contractor[0]).split('\n')[0].split(' ')
+                    contractor_list.pop(-1)
+                    contractor = ' '.join(contractor_list)
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        '',
+                        description,
+                        address,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ' '.join(contractor_list)
+                    ]
+
+                    values.append(temp_values)
+                    UrlResults.objects.create(date=date, url=url, record_id=id, status=status, address=address,
+                                              description=description, contractor=contractor)
+            driver.get(url.url)
+            wait.until(
+                EC.presence_of_element_located((By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')))
         main(url.description, values)
     return
 

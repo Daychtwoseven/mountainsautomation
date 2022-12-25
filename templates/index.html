@@ -35,6 +35,7 @@
             <th>Existing Solar System</th>
             <th>Utility Information</th>
             <th>Total Cost</th>
+            <th>Contractor</th>
           </tr>
         </thead>
         <tbody>
@@ -58,6 +59,7 @@
             <td>{% if row.existing_solar_system %} {{ row.existing_solar_system }} {% endif %}</td>
             <td>{% if row.utility_information %} {{ row.utility_information }} {% endif %}</td>
             <td>{% if row.total_cost %} {{ row.total_cost }} {% endif %}</td>
+            <td>{% if row.contractor %} {{ row.contractor }} {% endif %}</td>
           </tr>
         {% endfor %}
         </tbody>
