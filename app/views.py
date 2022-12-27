@@ -5922,47 +5922,48 @@ def url_82(date_start, date_end, url):
             row = records_table.find_element(By.TAG_NAME, 'tbody').find_elements(By.TAG_NAME, 'tr')[1:]
             date = var_checker(row[i].find_element(By.XPATH, f'//*[@id="lvPermits_ctrl{i}_lblIssued"]'))
             id = var_checker(row[i].find_element(By.XPATH, f'/html/body/div[5]/div[1]/form/div[5]/table/tbody/tr[{element_count}]/td[1]/a'))
-            href = row[i].find_element(By.XPATH, f'/html/body/div[5]/div[1]/form/div[5]/table/tbody/tr[{element_count}]/td[2]/div/a').get_attribute('href')
-            soup = beautifulsoup(href)
-            details = soup.find_all('td', class_='property_item')
+            if not UrlResults.objects.filter(record_id=id, date=date).first():
+                href = row[i].find_element(By.XPATH, f'/html/body/div[5]/div[1]/form/div[5]/table/tbody/tr[{element_count}]/td[2]/div/a').get_attribute('href')
+                soup = beautifulsoup(href)
+                details = soup.find_all('td', class_='property_item')
 
-            owner = details[0].text
-            address_text = details[7].text.split(',')
-            description = details[10].text
+                owner = details[0].text
+                address_text = details[7].text.split(',')
+                description = details[10].text
 
-            state = 'FL'
-            zip = address_text[-1]
-            address_text = details[7].text.split(',')[0].split(' ')
-            address_text.pop(-1)
-            city = address_text[-1]
-            address_text.pop(-1)
-            address = ' '.join(address_text)
-            i += 1
-            element_count += 1
+                state = 'FL'
+                zip = address_text[-1]
+                address_text = details[7].text.split(',')[0].split(' ')
+                address_text.pop(-1)
+                city = address_text[-1]
+                address_text.pop(-1)
+                address = ' '.join(address_text)
+                i += 1
+                element_count += 1
 
-            temp_values = [
-                url.description,
-                str(date),
-                id,
-                '',
-                '',
-                description,
-                address,
-                city,
-                state,
-                zip,
-                '',
-                owner,
-                '',
-                '',
-                '',
-                '',
-                ''
-            ]
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    '',
+                    '',
+                    description,
+                    address,
+                    city,
+                    state,
+                    zip,
+                    '',
+                    owner,
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
 
-            values.append(temp_values)
-            UrlResults.objects.create(url=url, record_id=id, date=date, owner=owner, address=address, city=city,
-                                      state=state, zip=zip, description=description)
+                values.append(temp_values)
+                UrlResults.objects.create(url=url, record_id=id, date=date, owner=owner, address=address, city=city,
+                                          state=state, zip=zip, description=description)
 
     main(url.description, values)
     return True
