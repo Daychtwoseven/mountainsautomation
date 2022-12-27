@@ -20,7 +20,7 @@ def run_all():
                 url_36, url_37, url_38, url_39, url_40, url_41, url_42, url_43, url_44, url_45, url_46,
                 url_47, url_48, url_49, url_50, url_51, url_52, url_53, url_54, url_55, url_56, url_57,
                 url_58, url_59, url_60, url_61, url_62, url_63, url_64, url_65, url_66, url_67, url_68, url_69, url_70,
-                url_71, url_72, url_73, url_74, url_75, url_76, url_77, url_78, url_79]
+                url_71, url_72, url_73, url_74, url_75, url_76, url_77, url_78, url_79, url_80, url_81, url_82]
 
     counter = 0
     threads = []
