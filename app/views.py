@@ -434,6 +434,8 @@ def url_4(date_start, date_end, url):
 def url_5(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
     time.sleep(15)
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
@@ -1502,9 +1504,8 @@ def url_22(date_start, date_end, url):
         city = ' '.join(city_text.split(' ')[0:-2]) if city_text else ''
         state = 'CA'
         zip = city_text.split(' ')[-1][0:5] if city_text else ''
-        date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
-        date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
-        if len(address_text) > 1 and status != '' and date_start <= date <= date_end and not UrlResults.objects.filter(
+
+        if len(address_text) > 1 and status != '' and not UrlResults.objects.filter(
                 record_id=id,
                 date=date).first():
             temp_values = [
@@ -1664,9 +1665,7 @@ def url_25(date_start, date_end, url):
             address = address_text.split(',')[0] if len(address_text) > 1 else ''
             city = ''.join(address_text.split(',')[1].split(' ')[1:-2]) if len(address_text) > 1 else ''
             zip = address_text.split(',')[1].split(' ')[-1] if len(address_text) > 1 else ''
-            date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
-            date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
-            if len(address_text) > 1 and status != '' and date_start <= date <= date_end and not UrlResults.objects.filter(
+            if len(address_text) > 1 and status != '' and not UrlResults.objects.filter(
                     record_id=id,
                     date=date).first():
                 temp_values = [
@@ -2846,7 +2845,7 @@ def url_41(date_start, date_end, url):
 def url_42(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-
+    time.sleep(15)
     date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
     date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
@@ -4194,8 +4193,6 @@ def url_59(date_start, date_end, url):
                     if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date).first():
                         state = 'TX'
                         city = 'SUGAR LAND'
-                        address_text.remove("SUGAR")
-                        address_text.remove("LAND")
                         address_text.remove("TX")
                         address_text.pop(-1)
                         address = ' '.join(address_text)
@@ -5010,7 +5007,7 @@ def url_70(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-    ate_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
     date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
@@ -5071,7 +5068,7 @@ def url_71(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
     wait = WebDriverWait(driver, 10)
-    ate_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
     date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
     records_table = driver.find_element(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
@@ -5460,7 +5457,7 @@ def url_76(date_start, date_end, url):
         description = var_checker(td[3])
         address_text = var_checker(td[2])
         if len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date).first():
-            address_text.split(',')
+            address_text = address_text.split(',')
             state = 'CA'
             address = ' '.join(address_text[0])
             city_text = address_text[1].split(' ')
@@ -5498,7 +5495,6 @@ def url_76(date_start, date_end, url):
 def url_77(date_start, date_end, url):
     driver = chrome_driver()
     driver.get(url.url)
-    values = []
     date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
     date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
 
@@ -5653,7 +5649,8 @@ def url_79(date_start, date_end, url):
                     ' ')
                 if len(address_text) > 1:
                     status = row.find_element(By.XPATH,
-                                              f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[{element_start_count}]/div[2]/div[8]/tyler-highlight/span').text
+                                              f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div['
+                                              f'2]/div[{element_start_count}]/div[2]/div[8]/tyler-highlight/span').text
                     zip = address_text[-1].split('-')[0]
                     print(zip)
                     description = row.find_element(By.XPATH, f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[{element_start_count}]/div[2]/div[12]/tyler-highlight/span')
