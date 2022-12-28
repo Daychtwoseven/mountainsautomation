@@ -14,7 +14,6 @@ import time
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-
 """
 class Selen:
 
@@ -57,34 +56,47 @@ Selen()
 
 """
 
+
 class Selen:
 
     def __init__(self):
 
         try:
-            website = 'https://www.marionfl.org/agencies-departments/departments-facilities-offices/building-safety/permit-inspections'
+            website = 'https://ims.palmbayflorida.org/ims/Find3/Results?cat=Permits'
             path = "C:/chromedriver.exe"
             service = Service(executable_path=path)
             driver = webdriver.Chrome(service=service)
             driver.get(website)
+
+            driver.find_element(By.XPATH, '/html/body/div[3]/div[3]/a').click()
+            time.sleep(3)
+
+            driver.find_element(By.XPATH, '/html/body/div[3]/div/div[3]/div[1]/div/div[2]/div[1]/div/a[1]').click()
+            time.sleep(3)
+
+            first_search = Select(driver.find_element(By.ID, 'find3SearchCriteria_0__find3Definition_StoredProcedureName'))
+            first_search.select_by_value('dbo.iMSFind3PermitsRecordType')
+            time.sleep(2)
+            first_search_contain = driver.find_element(By.XPATH, '//*[@id="find3SearchCriteria_0_SearchText"]')
+            first_search_contain.send_keys('solar')
+            time.sleep(3)
+
+            driver.find_element(By.XPATH, '//*[@id="create"]').click()
+            time.sleep(3)
+
+            first_search = Select(
+                driver.find_element(By.ID, 'find3SearchCriteria_1__find3Definition_StoredProcedureName'))
+            first_search.select_by_value('dbo.iMSFind3PermitsPermitNumber')
+            time.sleep(2)
+            first_search_contain = driver.find_element(By.XPATH, '//*[@id="find3SearchCriteria_1_SearchText"]')
+            first_search_contain.send_keys('BL22-17')
+            time.sleep(3)
+
+            driver.find_element(By.XPATH, '/html/body/div[3]/form/div[2]/div/button').click()
             time.sleep(5)
 
-            driver.find_element(By.ID, 'BTNREPORTS').click()
-
-            select = Select(driver.find_element(By.ID, 'CMBPERMITTYPE'))
-            select.select_by_value('185')
-
-            driver.find_element(By.ID, 'BTNSEARCH').click()
-
-            results_table = driver.find_element(By.ID, 'PERMITSGRID_')
-
-            if results_table:
-                results_tr = results_table.find_elements(By.TAG_NAME, 'tr')[1:]
-
-                for i in results_tr:
-                    td = i.find_elements(By.TAG_NAME, 'td')
-                    action = ActionChains(driver)
-                    action.double_click(td[0]).perform()
+            results = driver.find_elements(By.CLASS_NAME, 'recordrow')
+            print(results)
 
         except Exception as e:
             print(e)
