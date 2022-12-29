@@ -6284,6 +6284,155 @@ def url_85(date_start, date_end, url):
     return True
 
 
+def url_86(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    values = []
+    first_data = []
+    second_data = []
+    data = []
+
+    search = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
+    search.select_by_value('Development/Electrical/Standalone/NA')
+    time.sleep(5)
+
+    start_date = driver.find_element(By.XPATH,
+                                     '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate"]')
+    driver.execute_script(f"arguments[0].value = '12/28/2022'", start_date)
+    time.sleep(3)
+    end_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate"]')
+    driver.execute_script(f"arguments[0].value = '12/30/2022'", end_date)
+    time.sleep(3)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(5)
+
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            temp_data = {
+                'date': var_checker(td[2]),
+                'id': var_checker(td[3]),
+                'status': var_checker(td[4]),
+                'name': var_checker(td[6]),
+                'address': var_checker(td[7])
+            }
+            first_data.append(temp_data)
+        while driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1] and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(3)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2]
+            for row in result_tr:
+                td = row.find_elements(By.TAG_NAME, 'td')
+                temp_data = {
+                    'date': var_checker(td[2]),
+                    'id': var_checker(td[3]),
+                    'status': var_checker(td[4]),
+                    'name': var_checker(td[6]),
+                    'address': var_checker(td[7])
+                }
+                first_data.append(temp_data)
+
+    time.sleep(5)
+    search = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
+    search.select_by_value('Development/Electrical/Standalone/NA')
+    time.sleep(5)
+
+    start_date = driver.find_element(By.XPATH,
+                                     '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate"]')
+    driver.execute_script(f"arguments[0].value = '12/28/2022'", start_date)
+    time.sleep(3)
+    end_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate"]')
+    driver.execute_script(f"arguments[0].value = '12/30/2022'", end_date)
+    time.sleep(3)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(5)
+
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            temp_data = {
+                'date': var_checker(td[2]),
+                'id': var_checker(td[3]),
+                'status': var_checker(td[4]),
+                'name': var_checker(td[6]),
+                'address': var_checker(td[7])
+            }
+            second_data.append(temp_data)
+        while driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1] and \
+                driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(3)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2]
+            for row in result_tr:
+                td = row.find_elements(By.TAG_NAME, 'td')
+                temp_data = {
+                    'date': var_checker(td[2]),
+                    'id': var_checker(td[3]),
+                    'status': var_checker(td[4]),
+                    'name': var_checker(td[6]),
+                    'address': var_checker(td[7])
+                }
+                second_data.append(temp_data)
+
+    for i in first_data:
+        address = i['address']
+        for ii in second_data:
+            if address == ii['address']:
+                temp_data = {
+                    'date': i['date'],
+                    'id': i['id'],
+                    'status': i['status'],
+                    'name': i['name'],
+                    'address': i['address']
+                }
+                data.append(temp_data)
+
+    print(data)
+    for row in data:
+        print(row)
+        if not UrlResults.objects.filter(record_id=row['id'], date=row['date']).first():
+            address_text = row['address'].split(',')
+            address = address_text[0]
+            city_text = address_text[-1].split(' ')
+            zip = city_text[-1]
+            city_text.pop(-1)
+            state = city_text[-1]
+            city_text.pop(-1)
+            city = ' '.join(city_text)
+            temp_values = [
+                url.description,
+                str(row['date']),
+                id,
+                '',
+                row['name'],
+                '',
+                address,
+                city,
+                state,
+                zip,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                ''
+            ]
+            values.append(temp_values)
+            UrlResults.objects.create(url=url, record_id=row['id'], date=row['date'], address=address, city=city, state=state,
+                                      zip=zip, name=row['name'], status=row['status'])
+    main(url.description, values)
+    return True
+
+
 def chrome_driver():
     options = Options()
     options.headless = True
