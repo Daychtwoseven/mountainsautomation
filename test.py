@@ -62,22 +62,26 @@ class Selen:
     def __init__(self):
 
         try:
-            website = 'https://accela.fortworthtexas.gov/CitizenAccess/Cap/CapHome.aspx?module=Development&TabName=Development'
+            website = 'https://aca-prod.accela.com/EVANSTON/Cap/CapHome.aspx?module=Building&TabName=Building'
             path = "C:/chromedriver.exe"
             service = Service(executable_path=path)
             driver = webdriver.Chrome(service=service)
             driver.get(website)
 
-            search = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
-            search.select_by_value('Development/Electrical/Standalone/NA')
+            select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
+            select.select_by_value('Building/Solar/Residential/NA')
             time.sleep(5)
+
             start_date = driver.find_element(By.XPATH,
                                              '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate"]')
-            driver.execute_script(f"arguments[0].value = '12/28/2022'", start_date)
-            time.sleep(3)
+            driver.execute_script(f"arguments[0].value = '12/01/2022'", start_date)
+
             end_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate"]')
-            driver.execute_script(f"arguments[0].value = '12/30/2022'", end_date)
-            time.sleep(3)
+            driver.execute_script(f"arguments[0].value = '12/31/2022'", end_date)
+            time.sleep(5)
+
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            print(result_table)
         except Exception as e:
             print(e)
 
