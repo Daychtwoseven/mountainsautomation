@@ -110,7 +110,7 @@ def url_1(date_start, date_end, url):
         name = var_checker(td[4])
         td_status = var_checker(td[6])
         description = var_checker(td[9])
-        if td_status != "" and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if td_status != "" and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
             href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
             if href:
                 req = Request(
@@ -194,7 +194,7 @@ def url_2(date_start, date_end, url):
         name = td[4].text
         td_status = td[6].text
         description = td[4].text
-        if td_status != "" and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if td_status != "" and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
             href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
             if href:
                 req = Request(
@@ -285,7 +285,7 @@ def url_3(date_start, date_end, url):
                 job_value = driver.find_elements(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div['
                                                            '3]/div[5]/div[2]/div[3]/div[1]/div[2]/table/tbody/tr['
                                                            '2]/td[2]/div/span[1]/table/tbody/tr[2]/td/div/div/span[2]')
-                if owner and address and job_value and not UrlResults.objects.filter(record_id=id, date=date).first():
+                if owner and address and job_value and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                     owner = f"{var_checker(owner[0])}"
                     address = var_checker(address[0])
 
@@ -372,7 +372,7 @@ def url_4(date_start, date_end, url):
             state = None
             city = None
             zip = None
-            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
 
                 td[2].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -951,7 +951,7 @@ def url_14(date_start, date_end, url):
         description = td[4].text
         name = td[5].text
         address_text = var_checker(td[6])
-        if address_text and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if address_text and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
             address = address_text.split(',')[0]
             state = 'UT'
             city_text = address_text.split(',')[-1].split(' ')
@@ -1084,7 +1084,7 @@ def url_16(date_start, date_end, url):
         status = td[6].text
         description = td[4].text
         name = td[5].text
-        if status != '' and status != "Pending" and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if status != '' and status != "Pending" and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
             href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
             if href:
                 req = Request(
@@ -1168,7 +1168,7 @@ def url_17(date_start, date_end, url):
         city = ''.join(city_text[0:-2])
         state = 'CA'
         zip = city_text[-1]
-        if status != '' and status != "Pending" and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if status != '' and status != "Pending" and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
             temp_values = [
                 url.description,
                 str(date),
@@ -1228,7 +1228,7 @@ def url_18(date_start, date_end, url):
         city = 'Alameda'
         state = 'CA'
         zip = city_text[-1]
-        if len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
             temp_values = [
                 url.description,
                 str(date),
@@ -1378,7 +1378,7 @@ def url_20(date_start, date_end, url):
             id = var_checker(td[2])
             status = var_checker(td[5])
             name = var_checker(td[4])
-            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                 wait = WebDriverWait(driver, 10)
                 td[2].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -1442,7 +1442,7 @@ def url_21(date_start, date_end, url):
         description = td[4].text
         address_text = td[6].text
         address = address_text.split(',')[0]
-        if len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
             state = 'CA'
             city = address_text.split(',')[1]
             zip = address_text.split(',')[2].split(' ')[-1]
@@ -2142,7 +2142,7 @@ def url_32(date_start, date_end, url):
         status = td[2].text
         description = td[6].text
         address_text = td[5].text
-        if status != '' and len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if status != '' and len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
             address = address_text.split(',')[0]
             city = 'Oakland'
             state = 'CA'
@@ -2206,7 +2206,7 @@ def url_33(date_start, date_end, url):
             date = td[1].text
             id = td[2].text
             status = td[5].text
-            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
 
                 td[2].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -2939,7 +2939,7 @@ def url_43(date_start, date_end, url):
             status = var_checker(td[6])
             name = var_checker(td[4])
             description = var_checker(td[9])
-            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
 
                 td[2].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -3212,7 +3212,7 @@ def url_46(date_start, date_end, url):
             id = var_checker(td[2])
             status = var_checker(td[5])
             description = var_checker(td[4])
-            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                 wait = WebDriverWait(driver, 10)
                 td[2].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -3647,7 +3647,7 @@ def url_51(date_start, date_end, url):
                                             '9]/div[2]/div[6]/label').text
 
                     zip = address_text[-1]
-                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date).first():
+                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                         state = address_text[-2]
                         city = address_text[-3]
                         address_text.pop(-1)
@@ -4117,7 +4117,7 @@ def url_58(date_start, date_end, url):
                                               f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div['
                                               f'2]/div[{element_start_count}]/div[2]/div[8]/tyler-highlight/span').text
                     zip = address_text[-1]
-                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date).first():
+                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                         state = 'FL'
                         city = 'Deltona'
                         address_text.remove("DELTONA")
@@ -4192,7 +4192,7 @@ def url_59(date_start, date_end, url):
                                               f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div['
                                               f'2]/div[{element_start_count}]/div[2]/div[8]/tyler-highlight/span').text
                     zip = address_text[-1]
-                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date).first():
+                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                         state = 'TX'
                         city = 'SUGAR LAND'
                         address_text.remove("TX")
@@ -4343,7 +4343,7 @@ def url_61(date_start, date_end, url):
             id = var_checker(td[2])
             status = var_checker(td[6])
             name = var_checker(td[4])
-            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if td[2].find_elements(By.TAG_NAME, 'a') and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                 wait = WebDriverWait(driver, 10)
                 td[2].find_element(By.TAG_NAME, 'a').click()
                 wait.until(
@@ -4525,7 +4525,7 @@ def url_63(date_start, date_end, url):
                                               f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div['
                                               f'2]/div[{element_start_count}]/div[2]/div[8]/tyler-highlight/span').text
                     zip = address_text[-1]
-                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date).first():
+                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                         state = 'FL'
                         address_text.pop(-1)
                         address_text.remove("FL")
@@ -4830,7 +4830,7 @@ def url_67(date_start, date_end, url):
             description = var_checker(records_tr[i].find_element(By.XPATH, f'/html/body/div[1]/main/div['
                                                                            f'2]/div/div/div[1]/table/tbody/tr[{i}]/td[4]'))
 
-            if date_start <= date <= date_end and id and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if date_start <= date <= date_end and id and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                 records_tr[i].find_element(By.XPATH, f'/html/body/div[1]/main/div[2]/div/div/div['
                                                      f'1]/table/tbody/tr[{i}]/th/a').click()
                 wait.until(
@@ -4910,7 +4910,7 @@ def url_68(date_start, date_end, url):
                     description = var_checker(row.find_element(By.XPATH,
                                                                f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[{element_start_count}]/div[2]/div[12]/tyler-highlight/span'))
                     zip = address_text[-1]
-                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date).first():
+                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                         state = 'FL'
                         city = 'KISSIMMEE'
                         address_text.remove("KISSIMMEE")
@@ -4971,7 +4971,7 @@ def url_69(date_start, date_end, url):
             date = datetime.strptime('/'.join(date)[0:10], '%m/%d/%Y').date()
             id = var_checker(td[0])
             contractor = var_checker(td[4])
-            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                 href = f"http://webapp.sjcfl.us/Applications/WATSWebX/Permit/BLPermit.aspx?PermitNo={id}&PopUp=1"
                 soup = beautifulsoup(href)
                 address = soup.find(id='cphBody_txtPrjAddr')['value']
@@ -5178,7 +5178,7 @@ def url_72(date_start, date_end, url):
                         date[1] = new_day
 
                 date = datetime.strptime('/'.join(date)[0:10], '%m/%d/%Y').date()
-                if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
+                if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                     status = var_checker(driver.find_element(By.XPATH, '/html/body/div[1]/section['
                                                                        '2]/div/div/div/div/div/div/div/div['
                                                                        '2]/div/form/div[1]/table[1]/tbody/tr[4]/td['
@@ -5265,7 +5265,7 @@ def url_73(date_start, date_end, url):
                                               f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div['
                                               f'2]/div[{element_start_count}]/div[2]/div[8]/tyler-highlight/span').text
                     zip = address_text[-1]
-                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date).first():
+                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                         state = 'CA'
                         city = None
                         address_text.remove("CA")
@@ -5340,7 +5340,7 @@ def url_74(date_start, date_end, url):
                                               f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div['
                                               f'2]/div[{element_start_count}]/div[2]/div[8]/tyler-highlight/span').text
                     zip = address_text[-1]
-                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date).first():
+                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                         state = 'CA'
                         city = None
                         address_text.remove("CA")
@@ -5462,7 +5462,7 @@ def url_76(date_start, date_end, url):
         status = var_checker(td[4])
         description = var_checker(td[3])
         address_text = var_checker(td[2])
-        if len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date).first():
+        if len(address_text) > 1 and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
             address_text = address_text.split(',')
             state = 'CA'
             address = ' '.join(address_text[0])
@@ -5587,7 +5587,7 @@ def url_78(date_start, date_end, url):
                     zip = address_text[-1]
                     description = row.find_element(By.XPATH,
                                                    f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[{element_start_count}]/div[2]/div[12]/tyler-highlight/span')
-                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date).first():
+                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                         description = var_checker(description) if description else ''
                         zip = address_text[-1]
                         state = 'CA'
@@ -5662,7 +5662,7 @@ def url_79(date_start, date_end, url):
                     zip = address_text[-1].split('-')[0]
                     description = row.find_element(By.XPATH,
                                                    f'/html/body/div[2]/div[1]/div[2]/div/div/div/div/div/form/div[5]/div[2]/div[{element_start_count}]/div[2]/div[12]/tyler-highlight/span')
-                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date).first():
+                    if zip.isnumeric() and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                         description = var_checker(description) if description else ''
                         state = 'FL'
                         city = 'Miami Beach'
@@ -5942,7 +5942,7 @@ def url_82(date_start, date_end, url):
             date = var_checker(row[i].find_element(By.XPATH, f'//*[@id="lvPermits_ctrl{i}_lblIssued"]'))
             id = var_checker(row[i].find_element(By.XPATH,
                                                  f'/html/body/div[5]/div[1]/form/div[5]/table/tbody/tr[{element_count}]/td[1]/a'))
-            if not UrlResults.objects.filter(record_id=id, date=date).first():
+            if not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                 href = row[i].find_element(By.XPATH,
                                            f'/html/body/div[5]/div[1]/form/div[5]/table/tbody/tr[{element_count}]/td[2]/div/a').get_attribute(
                     'href')
@@ -7090,7 +7090,7 @@ def url_93(date_start, date_end, url):
             date = var_checker(td[1])
             id = var_checker(td[2])
             status = var_checker(td[4])
-            if not UrlResults.objects.filter(record_id=id, date=date).first():
+            if not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                 address_text = var_checker(td[3]).split(',')
                 if len(address_text) >= 2:
                     address = address_text[0]
@@ -7137,7 +7137,7 @@ def url_93(date_start, date_end, url):
                     date = var_checker(td[1])
                     id = var_checker(td[2])
                     status = var_checker(td[4])
-                    if not UrlResults.objects.filter(record_id=id, date=date).first():
+                    if not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                         address_text = var_checker(td[3]).split(',')
                         if len(address_text) >= 2:
                             address = address_text[0]
@@ -7194,7 +7194,7 @@ def url_94(date_start, date_end, url):
             id = var_checker(td[1])
             status = var_checker(td[5])
             name = var_checker(td[3])
-            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
+            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                 address_text = var_checker(td[4]).split(',')
                 if len(address_text) >= 2:
                     address = address_text[0]
@@ -7239,7 +7239,7 @@ def url_94(date_start, date_end, url):
                     id = var_checker(td[2])
                     status = var_checker(td[5])
                     name = var_checker(td[3])
-                    if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date).first():
+                    if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
                         address_text = var_checker(td[4]).split(',')
                         if len(address_text) >= 2:
                             address = address_text[0]
@@ -7268,6 +7268,1205 @@ def url_94(date_start, date_end, url):
                             values.append(temp_values)
                             UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
                                                       state=state, zip=zip, status=status, name=name)
+                    else:
+                        reach = 1
+                        break
+
+    main(url.description, values)
+    return True
+
+
+def url_95(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+    reach = 0
+    values = []
+
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[8])
+            name = var_checker(td[6])
+            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                address_text = var_checker(td[7]).split(',')
+                if len(address_text) >= 2:
+                    address = address_text[0]
+                    city = address_text[1]
+                    state = address_text[-1].split(' ')[1]
+                    zip = address_text[-1].split(' ')[-1]
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+                    values.append(temp_values)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                              state=state, zip=zip, status=status, name=name)
+            else:
+                reach = 1
+                break
+
+        while reach == 0 and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(5)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            if result_table:
+                result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+                for row in result_tr:
+                    td = row.find_elements(By.TAG_NAME, 'td')
+                    date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+                    id = var_checker(td[1])
+                    status = var_checker(td[8])
+                    name = var_checker(td[6])
+                    if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                        address_text = var_checker(td[7]).split(',')
+                        if len(address_text) >= 2:
+                            address = address_text[0]
+                            city = address_text[1]
+                            state = address_text[-1].split(' ')[1]
+                            zip = address_text[-1].split(' ')[-1]
+                            temp_values = [
+                                url.description,
+                                str(date),
+                                id,
+                                status,
+                                name,
+                                '',
+                                address,
+                                city,
+                                state,
+                                zip,
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                ''
+                            ]
+                            values.append(temp_values)
+                            UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                                      state=state, zip=zip, status=status, name=name)
+                    else:
+                        reach = 1
+                        break
+
+    main(url.description, values)
+    return True
+
+
+def url_96(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    reach = 0
+    values = []
+
+    select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSPermitType'))
+    select.select_by_value('Building/Solar/NA/NA')
+    time.sleep(3)
+
+    start_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate"]')
+    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
+
+    end_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate"]')
+    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
+    time.sleep(3)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+
+    time.sleep(5)
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            date = var_checker(td[1])
+            id = var_checker(td[2])
+            status = var_checker(td[6])
+            name = var_checker(td[4])
+            description = var_checker(td[8])
+            if not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                address = var_checker(td[5])
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    name,
+                    description,
+                    address,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
+                values.append(temp_values)
+                UrlResults.objects.create(url=url, record_id=id, date=date, address=address,
+                                          description=description, status=status, name=name)
+            else:
+                reach = 1
+                break
+
+        while reach == 0 and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(5)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            if result_table:
+                result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+                for row in result_tr:
+                    td = row.find_elements(By.TAG_NAME, 'td')
+                    date = var_checker(td[1])
+                    id = var_checker(td[2])
+                    status = var_checker(td[6])
+                    name = var_checker(td[4])
+                    description = var_checker(td[8])
+                    if not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                        address = var_checker(td[5])
+                        temp_values = [
+                            url.description,
+                            str(date),
+                            id,
+                            status,
+                            name,
+                            description,
+                            address,
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            ''
+                        ]
+                        values.append(temp_values)
+                        UrlResults.objects.create(url=url, record_id=id, date=date, address=address,
+                                                  description=description, status=status, name=name)
+                    else:
+                        reach = 1
+                        break
+
+    main(url.description, values)
+    return True
+
+
+def url_97(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+    reach = 0
+    values = []
+
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[6])
+            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                address_text = var_checker(td[5]).split(',')
+                if len(address_text) >= 2:
+                    address = address_text[0]
+                    city = address_text[1]
+                    state = address_text[-1].split(' ')[1]
+                    zip = address_text[-1].split(' ')[-1]
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        '',
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+                    values.append(temp_values)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                              state=state, zip=zip, status=status)
+            else:
+                reach = 1
+                break
+
+        while reach == 0 and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(5)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            if result_table:
+                result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+                for row in result_tr:
+                    td = row.find_elements(By.TAG_NAME, 'td')
+                    date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+                    id = var_checker(td[1])
+                    status = var_checker(td[6])
+                    if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                        address_text = var_checker(td[5]).split(',')
+                        if len(address_text) >= 2:
+                            address = address_text[0]
+                            city = address_text[1]
+                            state = address_text[-1].split(' ')[1]
+                            zip = address_text[-1].split(' ')[-1]
+                            temp_values = [
+                                url.description,
+                                str(date),
+                                id,
+                                status,
+                                '',
+                                '',
+                                address,
+                                city,
+                                state,
+                                zip,
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                ''
+                            ]
+                            values.append(temp_values)
+                            UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                                      state=state, zip=zip, status=status)
+                    else:
+                        reach = 1
+                        break
+
+    main(url.description, values)
+    return True
+
+
+def url_98(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+    reach = 0
+    values = []
+
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[5])
+            name = var_checker(td[3])
+            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                address_text = var_checker(td[4]).split(',')
+                if len(address_text) >= 2:
+                    address = address_text[0]
+                    city = address_text[1]
+                    state = 'CA'
+                    state_text = address_text[-1].split(' ')
+                    if 'CA' in state_text:
+                        state_text.remove('CA')
+                    zip = state_text[1]
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+                    values.append(temp_values)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                              state=state, zip=zip, status=status, name=name)
+            else:
+                reach = 1
+                break
+
+        while reach == 0 and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(5)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            if result_table:
+                result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+                for row in result_tr:
+                    td = row.find_elements(By.TAG_NAME, 'td')
+                    date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+                    id = var_checker(td[1])
+                    status = var_checker(td[5])
+                    name = var_checker(td[3])
+                    if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                        address_text = var_checker(td[4]).split(',')
+                        if len(address_text) >= 2:
+                            address = address_text[0]
+                            city = address_text[1]
+                            state = 'CA'
+                            state_text = address_text[-1].split(' ')
+                            if 'CA' in state_text:
+                                state_text.remove('CA')
+                            zip = state_text[1]
+                            temp_values = [
+                                url.description,
+                                str(date),
+                                id,
+                                status,
+                                name,
+                                '',
+                                address,
+                                city,
+                                state,
+                                zip,
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                ''
+                            ]
+                            values.append(temp_values)
+                            UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                                      state=state, zip=zip, status=status, name=name)
+                    else:
+                        reach = 1
+                        break
+
+    main(url.description, values)
+    return True
+
+
+def url_99(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    reach = 0
+    values = []
+
+    start_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSStartDate"]')
+    driver.execute_script(f"arguments[0].value = '{date_start}'", start_date)
+
+    end_date = driver.find_element(By.XPATH, '//*[@id="ctl00_PlaceHolderMain_generalSearchForm_txtGSEndDate"]')
+    driver.execute_script(f"arguments[0].value = '{date_end}'", end_date)
+    time.sleep(5)
+
+    select = Select(driver.find_element(By.ID, 'ctl00_PlaceHolderMain_generalSearchForm_ddlGSLicenseType'))
+    select.select_by_value('(CLR) Electrical Contractor, Renewable Energy, Limited')
+    time.sleep(5)
+
+    driver.find_element(By.ID, 'ctl00_PlaceHolderMain_btnNewSearch').click()
+    time.sleep(5)
+
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            date = var_checker(td[0])
+            id = var_checker(td[2])
+            status = var_checker(td[3])
+            if not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                address = var_checker(td[6])
+                temp_values = [
+                    url.description,
+                    str(date),
+                    id,
+                    status,
+                    '',
+                    '',
+                    address,
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '',
+                    ''
+                ]
+                values.append(temp_values)
+                UrlResults.objects.create(url=url, record_id=id, date=date, address=address, zip=zip, status=status)
+            else:
+                reach = 1
+                break
+
+        while reach == 0 and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(5)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_dgvPermitList_gdvPermitList')
+            if result_table:
+                result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+                for row in result_tr:
+                    td = row.find_elements(By.TAG_NAME, 'td')
+                    date = var_checker(td[0])
+                    id = var_checker(td[2])
+                    status = var_checker(td[3])
+                    if not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                        address = var_checker(td[6])
+                        temp_values = [
+                            url.description,
+                            str(date),
+                            id,
+                            status,
+                            '',
+                            '',
+                            address,
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                            ''
+                        ]
+                        values.append(temp_values)
+                        UrlResults.objects.create(url=url, record_id=id, date=date, address=address, zip=zip,
+                                                  status=status)
+                    else:
+                        reach = 1
+                        break
+
+    main(url.description, values)
+    return True
+
+
+def url_100(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+    reach = 0
+    values = []
+
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[5])
+            name = var_checker(td[3])
+            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                address_text = var_checker(td[4]).split(',')
+                if len(address_text) >= 2:
+                    address = address_text[0]
+                    city = address_text[1]
+                    state = address_text[-1].split(' ')[1]
+                    zip = address_text[-1].split(' ')[-1]
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+                    values.append(temp_values)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                              state=state, zip=zip, status=status, name=name)
+            else:
+                reach = 1
+                break
+
+        while reach == 0 and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(5)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            if result_table:
+                result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+                for row in result_tr:
+                    td = row.find_elements(By.TAG_NAME, 'td')
+                    date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+                    id = var_checker(td[1])
+                    status = var_checker(td[5])
+                    name = var_checker(td[3])
+                    if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                        address_text = var_checker(td[4]).split(',')
+                        if len(address_text) >= 2:
+                            address = address_text[0]
+                            city = address_text[1]
+                            state = address_text[-1].split(' ')[1]
+                            zip = address_text[-1].split(' ')[-1]
+                            temp_values = [
+                                url.description,
+                                str(date),
+                                id,
+                                status,
+                                name,
+                                '',
+                                address,
+                                city,
+                                state,
+                                zip,
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                ''
+                            ]
+                            values.append(temp_values)
+                            UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                                      state=state, zip=zip, status=status, name=name)
+                    else:
+                        reach = 1
+                        break
+
+    main(url.description, values)
+    return True
+
+
+def url_101(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+    reach = 0
+    values = []
+
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[5])
+            name = var_checker(td[3])
+            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                address = var_checker(td[4])
+                if len(address) != '':
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+                    values.append(temp_values)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, address=address, zip=zip, status=status,
+                                              name=name)
+            else:
+                reach = 1
+                break
+
+        while reach == 0 and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(5)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            if result_table:
+                result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+                for row in result_tr:
+                    td = row.find_elements(By.TAG_NAME, 'td')
+                    date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+                    id = var_checker(td[1])
+                    status = var_checker(td[5])
+                    name = var_checker(td[3])
+                    if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date,
+                                                                                        url_id=url.id).first():
+                        address = var_checker(td[4])
+                        if len(address) != '':
+                            temp_values = [
+                                url.description,
+                                str(date),
+                                id,
+                                status,
+                                name,
+                                '',
+                                address,
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                ''
+                            ]
+                            values.append(temp_values)
+                            UrlResults.objects.create(url=url, record_id=id, date=date, address=address, zip=zip,
+                                                      status=status,
+                                                      name=name)
+                    else:
+                        reach = 1
+                        break
+
+    main(url.description, values)
+    return True
+
+
+def url_102(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+    reach = 0
+    values = []
+
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[5])
+            name = var_checker(td[3])
+            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                address_text = var_checker(td[4]).split(',')
+                if len(address_text) >= 2:
+                    address = address_text[0]
+                    city = address_text[1]
+                    state = address_text[-1].split(' ')[1]
+                    zip = address_text[-1].split(' ')[-1]
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+                    values.append(temp_values)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city, state=state,
+                                              zip=zip, status=status,
+                                              name=name)
+            else:
+                reach = 1
+                break
+        while reach == 0 and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(10)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            if result_table:
+                result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+                for row in result_tr:
+                    td = row.find_elements(By.TAG_NAME, 'td')
+                    date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+                    id = var_checker(td[1])
+                    status = var_checker(td[5])
+                    name = var_checker(td[3])
+                    if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date,
+                                                                                        url_id=url.id).first():
+                        address_text = var_checker(td[4]).split(',')
+                        if len(address_text) >= 2:
+                            address = address_text[0]
+                            city = address_text[1]
+                            state = address_text[-1].split(' ')[1]
+                            zip = address_text[-1].split(' ')[-1]
+                            temp_values = [
+                                url.description,
+                                str(date),
+                                id,
+                                status,
+                                name,
+                                '',
+                                address,
+                                city,
+                                state,
+                                zip,
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                ''
+                            ]
+                            values.append(temp_values)
+                            UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                                      state=state,
+                                                      zip=zip, status=status,
+                                                      name=name)
+                    else:
+                        reach = 1
+                        break
+
+    main(url.description, values)
+    return True
+
+
+def url_103(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+    reach = 0
+    values = []
+
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[5])
+            name = var_checker(td[3])
+            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                address_text = var_checker(td[4]).split(',')
+                if len(address_text) >= 2:
+                    address = address_text[0]
+                    city = address_text[1]
+                    state = address_text[-1].split(' ')[1]
+                    zip = address_text[-1].split(' ')[2]
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+                    values.append(temp_values)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city, state=state,
+                                              zip=zip, status=status, name=name)
+            else:
+                reach = 1
+                break
+
+        while reach == 0 and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(5)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            if result_table:
+                result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+                for row in result_tr:
+                    td = row.find_elements(By.TAG_NAME, 'td')
+                    date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+                    id = var_checker(td[1])
+                    status = var_checker(td[5])
+                    name = var_checker(td[3])
+                    if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date,
+                                                                                        url_id=url.id).first():
+                        address_text = var_checker(td[4]).split(',')
+                        if len(address_text) >= 2:
+                            address = address_text[0]
+                            city = address_text[1]
+                            state = address_text[-1].split(' ')[1]
+                            zip = address_text[-1].split(' ')[2]
+                            temp_values = [
+                                url.description,
+                                str(date),
+                                id,
+                                status,
+                                name,
+                                '',
+                                address,
+                                city,
+                                state,
+                                zip,
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                ''
+                            ]
+                            values.append(temp_values)
+                            UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                                      state=state, zip=zip, status=status, name=name)
+                    else:
+                        reach = 1
+                        break
+
+    main(url.description, values)
+    return True
+
+
+def url_104(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+    reach = 0
+    values = []
+
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[7])
+            name = var_checker(td[5])
+            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                address_text = var_checker(td[6]).split(',')
+                if len(address_text) >= 2:
+                    address = address_text[0]
+                    city = address_text[1]
+                    state = address_text[-1].split(' ')[1]
+                    zip = address_text[-1].split(' ')[2]
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+                    values.append(temp_values)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city, state=state,
+                                              zip=zip, status=status, name=name)
+            else:
+                reach = 1
+                break
+
+        while reach == 0 and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(10)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            if result_table:
+                result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+                for row in result_tr:
+                    td = row.find_elements(By.TAG_NAME, 'td')
+                    date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+                    id = var_checker(td[1])
+                    status = var_checker(td[7])
+                    name = var_checker(td[5])
+                    if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date,
+                                                                                        url_id=url.id).first():
+                        address_text = var_checker(td[6]).split(',')
+                        if len(address_text) >= 2:
+                            address = address_text[0]
+                            city = address_text[1]
+                            state = address_text[-1].split(' ')[1]
+                            zip = address_text[-1].split(' ')[2]
+                            temp_values = [
+                                url.description,
+                                str(date),
+                                id,
+                                status,
+                                name,
+                                '',
+                                address,
+                                city,
+                                state,
+                                zip,
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                ''
+                            ]
+                            values.append(temp_values)
+                            UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                                      state=state,
+                                                      zip=zip, status=status, name=name)
+                    else:
+                        reach = 1
+                        break
+
+    main(url.description, values)
+    return True
+
+
+def url_105(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+    reach = 0
+    values = []
+
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[5])
+            name = var_checker(td[3])
+            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                address_text = var_checker(td[4]).split(',')
+                if len(address_text) >= 2:
+                    address = address_text[0]
+                    city = address_text[1]
+                    state = address_text[-1].split(' ')[1]
+                    zip = address_text[-1].split(' ')[2]
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+                    values.append(temp_values)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city, state=state,
+                                              zip=zip, status=status, name=name)
+            else:
+                reach = 1
+                break
+
+        while reach == 0 and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(10)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            if result_table:
+                result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+                for row in result_tr:
+                    td = row.find_elements(By.TAG_NAME, 'td')
+                    date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+                    id = var_checker(td[1])
+                    status = var_checker(td[5])
+                    name = var_checker(td[3])
+                    if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date,
+                                                                                        url_id=url.id).first():
+                        address_text = var_checker(td[4]).split(',')
+                        if len(address_text) >= 2:
+                            address = address_text[0]
+                            city = address_text[1]
+                            state = address_text[-1].split(' ')[1]
+                            zip = address_text[-1].split(' ')[2]
+                            temp_values = [
+                                url.description,
+                                str(date),
+                                id,
+                                status,
+                                name,
+                                '',
+                                address,
+                                city,
+                                state,
+                                zip,
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                ''
+                            ]
+                            values.append(temp_values)
+                            UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                                      state=state,
+                                                      zip=zip, status=status, name=name)
+                    else:
+                        reach = 1
+                        break
+
+    main(url.description, values)
+    return True
+
+
+def url_106(date_start, date_end, url):
+    driver = chrome_driver()
+    driver.get(url.url)
+    date_start = datetime.strptime(date_start, '%m/%d/%Y').date()
+    date_end = datetime.strptime(date_end, '%m/%d/%Y').date()
+    reach = 0
+    values = []
+
+    result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+    if result_table:
+        result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+        for row in result_tr:
+            td = row.find_elements(By.TAG_NAME, 'td')
+            date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+            id = var_checker(td[1])
+            status = var_checker(td[5])
+            name = var_checker(td[3])
+            if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                address_text = var_checker(td[4]).split(',')
+                if len(address_text) >= 2:
+                    address = address_text[0]
+                    city = address_text[1]
+                    state = address_text[-1].split(' ')[1]
+                    zip = address_text[-1].split(' ')[2]
+                    temp_values = [
+                        url.description,
+                        str(date),
+                        id,
+                        status,
+                        name,
+                        '',
+                        address,
+                        city,
+                        state,
+                        zip,
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]
+                    values.append(temp_values)
+                    UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city, state=state,
+                                              zip=zip, status=status, name=name)
+            else:
+                reach = 1
+                break
+
+        while reach == 0 and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') and driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_elements(By.TAG_NAME, 'a'):
+            driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext')[-1].find_element(By.TAG_NAME, 'a').click()
+            time.sleep(10)
+            result_table = driver.find_elements(By.ID, 'ctl00_PlaceHolderMain_CapView_gdvPermitList')
+            if result_table:
+                result_tr = result_table[0].find_elements(By.TAG_NAME, 'tr')[3:-2] if driver.find_elements(By.CLASS_NAME, 'aca_pagination_PrevNext') else result_table[0].find_elements(By.TAG_NAME, 'tr')[3:]
+                for row in result_tr:
+                    td = row.find_elements(By.TAG_NAME, 'td')
+                    date = datetime.strptime(var_checker(td[0]), '%m/%d/%Y').date()
+                    id = var_checker(td[1])
+                    status = var_checker(td[5])
+                    name = var_checker(td[3])
+                    if date_start <= date <= date_end and not UrlResults.objects.filter(record_id=id, date=date,
+                                                                                        url_id=url.id).first():
+                        address_text = var_checker(td[4]).split(',')
+                        if len(address_text) >= 2:
+                            address = address_text[0]
+                            city = address_text[1]
+                            state = address_text[-1].split(' ')[1]
+                            zip = address_text[-1].split(' ')[2]
+                            temp_values = [
+                                url.description,
+                                str(date),
+                                id,
+                                status,
+                                name,
+                                '',
+                                address,
+                                city,
+                                state,
+                                zip,
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                                ''
+                            ]
+                            values.append(temp_values)
+                            UrlResults.objects.create(url=url, record_id=id, date=date, address=address, city=city,
+                                                      state=state,
+                                                      zip=zip, status=status, name=name)
                     else:
                         reach = 1
                         break
