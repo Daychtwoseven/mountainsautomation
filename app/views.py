@@ -397,72 +397,46 @@ def url_3(date_start, date_end, url):
             name = var_checker(td[4])
             description = var_checker(td[5])
             if td[2].find_elements(By.TAG_NAME, 'a'):
-                wait = WebDriverWait(driver, 10)
-                td[2].find_element(By.TAG_NAME, 'a').click()
-                wait.until(
-                    EC.presence_of_element_located((By.XPATH, '//*[@id="ctl00_PlaceHolderMain_lblPermitNumber"]')))
-                owner = driver.find_elements(By.XPATH,
-                                             '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
-                                             '2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
-                                             '2]/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr[1]/td')
-                address = driver.find_elements(By.XPATH,
-                                               '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div[3]/div[5]/div['
-                                               '2]/div[3]/div[1]/div[1]/table/tbody/tr[2]/td['
-                                               '2]/div/span/table/tbody/tr/td/table/tbody/tr/td[2]/table/tbody/tr['
-                                               '2]/td')
-                job_value = driver.find_elements(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div['
-                                                           '3]/div[5]/div[2]/div[3]/div[1]/div[2]/table/tbody/tr['
-                                                           '2]/td[2]/div/span[1]/table/tbody/tr[2]/td/div/div/span[2]')
-                if owner and address and job_value and not UrlResults.objects.filter(record_id=id, date=date,
-                                                                                     url_id=url.id).first():
-                    owner = f"{var_checker(owner[0])}"
-                    address = var_checker(address[0])
+                href = td[2].find_element(By.TAG_NAME, 'a').get_attribute('href')
+                soup = beautifulsoup(href)
+                address_text = soup.find(id='tbl_worklocation').text.split('\n')
+                contractor = soup.find(id='tbl_licensedps').text
+                job_value = soup.find(id='ctl00_PlaceHolderMain_PermitDetailList1_tdADIContent').text
 
-                    city_text = var_checker(
-                        driver.find_element(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div[2]/div['
-                                                      '1]/div[3]/div[5]/div[2]/div[3]/div[1]/div['
-                                                      '1]/table/tbody/tr[2]/td['
-                                                      '2]/div/span/table/tbody/tr/td/table/tbody/tr/td['
-                                                      '2]/table/tbody/tr[3]/td')).split(' ')
+                if not UrlResults.objects.filter(record_id=id, date=date, url_id=url.id).first():
+                    print(address_text)
+                    if len(address_text) >= 2:
+                        address = address_text[0]
+                        city_text = address_text[-1].split(' ')
+                        zip = city_text[-1]
+                        state = city_text[-2]
+                        city_text.pop(-1)
+                        city_text.pop(-1)
+                        city = ' '.join(city_text)
 
-                    if len(city_text) <= 2:
-                        city_text = var_checker(
-                            driver.find_element(By.XPATH, '/html/body/form/div[4]/div[1]/div[7]/div[2]/div[1]/div['
-                                                          '3]/div[5]/div[2]/div[3]/div[1]/div[1]/table/tbody/tr['
-                                                          '2]/td[2]/div/span/table/tbody/tr/td/table/tbody/tr/td['
-                                                          '2]/table/tbody/tr[4]/td')).split(' ')
-                    state = 'FL'
-                    zip = city_text[-1].split('-')[0]
-                    city_text.pop(-1)
-                    city_text.pop(-1)
-                    city = ' '.join(city_text)
-
-                    temp_values = [
-                        url.description,
-                        str(date),
-                        id,
-                        status,
-                        name,
-                        description,
-                        address,
-                        city,
-                        state,
-                        zip,
-                        '',
-                        owner,
-                        var_checker(job_value[0]),
-                        '',
-                        '',
-                        '',
-                    ]
-                    values.append(temp_values)
-                    print(var_checker(job_value[0]) if job_value else '')
-                    UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
-                                              address=address, city=' '.join(city), state=state, zip=zip, owner=owner,
-                                              description=description,
-                                              job_value=var_checker(job_value[0]))
-
-            driver.back()
+                        temp_values = [
+                            url.description,
+                            str(date),
+                            id,
+                            status,
+                            name,
+                            description,
+                            address,
+                            city,
+                            state,
+                            zip,
+                            '',
+                            '',
+                            job_value,
+                            '',
+                            '',
+                            '',
+                            contractor
+                        ]
+                        values.append(temp_values)
+                        UrlResults.objects.create(url=url, record_id=id, date=date, status=status, name=name,
+                                                  address=address, city=' '.join(city), state=state, zip=zip,
+                                                  description=description, job_value=job_value, contractor=contractor)
 
         main(url.description, values)
     return True
