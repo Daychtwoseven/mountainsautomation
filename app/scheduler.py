@@ -6,7 +6,7 @@ from app.views import *
 def start(action):
     if action == "run_all":
         scheduler = BackgroundScheduler()
-        scheduler.add_job(run_all, 'interval', minutes=120)
+        scheduler.add_job(run_all, 'interval', minutes=500)
         scheduler.start()
 
 
