@@ -11,7 +11,7 @@
  Target Server Version : 80030
  File Encoding         : 65001
 
- Date: 07/01/2023 00:35:29
+ Date: 10/01/2023 00:48:16
 */
 
 SET NAMES utf8mb4;
@@ -46,7 +46,7 @@ CREATE TABLE `app_urlresults`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `app_urlresults_url_id_915b1b51_fk_app_urls_id`(`url_id`) USING BTREE,
   CONSTRAINT `app_urlresults_url_id_915b1b51_fk_app_urls_id` FOREIGN KEY (`url_id`) REFERENCES `app_urls` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 17722 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 23167 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of app_urlresults
@@ -63,7 +63,7 @@ CREATE TABLE `app_urls`  (
   `date_created` datetime(6) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 117 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 116 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of app_urls
@@ -126,7 +126,7 @@ INSERT INTO `app_urls` VALUES (55, 'https://aca-prod.accela.com/LAKECO/Cap/Globa
 INSERT INTO `app_urls` VALUES (56, 'https://permitsonline.roseville.ca.us/OPS/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Roseville CA', '2022-12-20 21:56:10.000000', 1);
 INSERT INTO `app_urls` VALUES (57, 'https://permits.mynevadacounty.com/CitizenAccess/Cap/CapHome.aspx?module=Building', 'Nevada County CA', '2022-12-20 22:24:20.000000', 0);
 INSERT INTO `app_urls` VALUES (58, 'https://deltonafl-energovweb.tylerhost.net/apps/SelfService#/search?m=1&fm=2&ps=100&pn=1&em=true&st=solar', 'Deltona FL', '2022-12-21 21:14:17.000000', 1);
-INSERT INTO `app_urls` VALUES (59, 'https://energovweb.sugarlandtx.gov/EnerGov_prod/SelfService#/search?m=1&fm=2&ps=100&pn=1&em=true&st=solar', 'Sugarland TX', '2022-12-21 21:41:18.000000', 1);
+INSERT INTO `app_urls` VALUES (59, 'https://energovweb.sugarlandtx.gov/EnerGov_prod/SelfService#/search?m=1&fm=2&ps=10&pn=1&em=true&st=solar', 'Sugarland TX', '2022-12-21 21:41:18.000000', 1);
 INSERT INTO `app_urls` VALUES (60, 'https://aca-prod.accela.com/CVB/Cap/GlobalSearchResults.aspx?QueryText=solar#', 'VA BEACH GENERAL', '2022-12-21 21:59:34.000000', 1);
 INSERT INTO `app_urls` VALUES (61, 'https://accela.co.kern.ca.us/CitizenAccess/Cap/CapHome.aspx?module=Building&TabName=Home', 'Kern County CA', '2022-12-21 23:08:38.000000', 1);
 INSERT INTO `app_urls` VALUES (62, 'https://aca-prod.accela.com/SHELBYCO/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Memphis TN', '2022-12-23 12:42:34.000000', 1);
@@ -184,6 +184,8 @@ INSERT INTO `app_urls` VALUES (113, 'https://aca-prod.accela.com/CITYOFRC/Cap/Ca
 INSERT INTO `app_urls` VALUES (114, 'https://aca-prod.accela.com/SANBENITO/Cap/GlobalSearchResults.aspx?QueryText=solar#', 'San Benito County CA', '2023-01-04 15:28:22.000000', 1);
 INSERT INTO `app_urls` VALUES (115, 'https://aca-prod.accela.com/TEHACHAPI/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Tehachapi CA', '2023-01-04 19:49:11.000000', 1);
 INSERT INTO `app_urls` VALUES (116, 'https://aca-prod.accela.com/SCCGOV/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Santa Clara CA', '2023-01-04 20:00:45.000000', 1);
+INSERT INTO `app_urls` VALUES (117, 'https://erieco-energovpub.tylerhost.net/Apps/SelfService#/search?m=1&fm=2&ps=100&pn=1&em=true&st=solar', 'Erie CO', '2023-01-09 22:32:09.000000', 1);
+INSERT INTO `app_urls` VALUES (118, 'https://tustinca-energovpub.tylerhost.net/Apps/SelfService#/search?m=1&fm=2&ps=100&pn=1&em=true&st=solar', 'Tustin CA', '2023-01-09 23:12:28.000000', 1);
 
 -- ----------------------------
 -- Table structure for auth_group
@@ -389,7 +391,7 @@ CREATE TABLE `django_migrations`  (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of django_migrations
