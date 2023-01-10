@@ -11,7 +11,7 @@
  Target Server Version : 80030
  File Encoding         : 65001
 
- Date: 10/01/2023 00:48:16
+ Date: 10/01/2023 23:15:20
 */
 
 SET NAMES utf8mb4;
@@ -46,7 +46,7 @@ CREATE TABLE `app_urlresults`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `app_urlresults_url_id_915b1b51_fk_app_urls_id`(`url_id`) USING BTREE,
   CONSTRAINT `app_urlresults_url_id_915b1b51_fk_app_urls_id` FOREIGN KEY (`url_id`) REFERENCES `app_urls` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 23167 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 23345 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of app_urlresults
@@ -63,7 +63,7 @@ CREATE TABLE `app_urls`  (
   `date_created` datetime(6) NOT NULL,
   `is_active` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 116 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 120 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of app_urls
@@ -186,6 +186,7 @@ INSERT INTO `app_urls` VALUES (115, 'https://aca-prod.accela.com/TEHACHAPI/Cap/G
 INSERT INTO `app_urls` VALUES (116, 'https://aca-prod.accela.com/SCCGOV/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Santa Clara CA', '2023-01-04 20:00:45.000000', 1);
 INSERT INTO `app_urls` VALUES (117, 'https://erieco-energovpub.tylerhost.net/Apps/SelfService#/search?m=1&fm=2&ps=100&pn=1&em=true&st=solar', 'Erie CO', '2023-01-09 22:32:09.000000', 1);
 INSERT INTO `app_urls` VALUES (118, 'https://tustinca-energovpub.tylerhost.net/Apps/SelfService#/search?m=1&fm=2&ps=100&pn=1&em=true&st=solar', 'Tustin CA', '2023-01-09 23:12:28.000000', 1);
+INSERT INTO `app_urls` VALUES (119, 'https://aca-prod.accela.com/PITTSBURG/Cap/GlobalSearchResults.aspx?QueryText=solar', 'Pittsburg CA', '2023-01-10 20:59:02.000000', 1);
 
 -- ----------------------------
 -- Table structure for auth_group
@@ -391,7 +392,7 @@ CREATE TABLE `django_migrations`  (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `applied` datetime(6) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 30 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of django_migrations
